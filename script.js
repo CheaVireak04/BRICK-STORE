@@ -7,6 +7,14 @@
 // ==========================================
 
 const products = [
+    { 
+        id: 1, 
+        name: "Karambit Doppler", 
+        price: 12,        // <-- CHANGE DISCOUNTED PRICE HERE (The amount they pay)
+        oldPrice: 15,     // <-- CHANGE ORIGINAL PRICE HERE (Shows with strikethrough)
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
+        desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." 
+    },
     { id: 1, name: "Karambit Doppler", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." },
     { id: 2, name: "Karambit Fade", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand." },
     { id: 3, name: "M9 Bayonet Crimson Web", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", desc: "Premium replica desk toy. Factory new look with distinct webbing patterns. Heavy-duty metal construction." },
