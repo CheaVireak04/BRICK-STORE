@@ -22,7 +22,11 @@ const products = [
 // --- APP LOGIC & ROUTING ---
 const app = {
     tg: window.Telegram.WebApp,
-    supportUsername: "chea_vireak", // It now links directly to you!
+    supportUsername: "chea_vireak",
+    
+    // Search & Filter State
+    searchQuery: "",
+    maxPrice: 1000,
 
     init() {
         this.tg.expand();
@@ -71,11 +75,9 @@ const app = {
         this.tg.openTelegramLink(`https://t.me/${this.supportUsername}`);
     },
 
-    // SIMPLE & FOOLPROOF SCREENSHOT METHOD
+    // SIMPLE NATIVE SCREENSHOT POPUP
     takeScreenshot() {
         this.haptic('medium');
-        
-        // Uses Telegram's native popup window (Works perfectly on iOS, Android, and Web)
         this.tg.showAlert(
             "📸 HOW TO ORDER:\n\n1. Use your phone's physical buttons to take a screenshot of this screen right now.\n\n2. Tap 'Order via Telegram' below.\n\n3. Send us the photo in the chat!"
         );
@@ -87,9 +89,38 @@ const app = {
         });
     },
 
+    // NEW: Handle typing in the search bar
+    handleSearch(event) {
+        this.searchQuery = event.target.value.toLowerCase();
+        this.renderCatalog();
+    },
+
+    // NEW: Handle sliding the price filter
+    handlePriceFilter(event) {
+        this.maxPrice = parseInt(event.target.value);
+        document.getElementById('priceValue').innerText = '$' + this.maxPrice;
+        this.renderCatalog();
+    },
+
+    // UPDATED: Now filters products before rendering them!
     renderCatalog() {
         const grid = document.getElementById('product-grid');
-        grid.innerHTML = products.map(product => `
+        
+        // Filter the products array based on user input
+        const filteredProducts = products.filter(product => {
+            const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
+            const matchesPrice = product.price <= this.maxPrice;
+            return matchesSearch && matchesPrice;
+        });
+
+        // Show a message if no products match the search/filter
+        if (filteredProducts.length === 0) {
+            grid.innerHTML = `<div class="col-span-2 text-center py-10 text-premiumGray text-sm">No items found matching your search.</div>`;
+            return;
+        }
+
+        // Draw the matching products
+        grid.innerHTML = filteredProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain">
