@@ -36,11 +36,33 @@ const app = {
     navigate(viewId) {
         this.haptic('light');
         
-        // Hide all views
+        // 1. Hide all views EXCEPT the target view
         document.querySelectorAll('.view-section').forEach(el => {
-            el.classList.remove('active');
-            setTimeout(() => el.classList.add('hidden'), 50); // small delay for clean animation
+            if (el.id !== `view-${viewId}`) {
+                el.classList.remove('active');
+                el.classList.add('hidden');
+            }
         });
+
+        // 2. Show the target view
+        const target = document.getElementById(`view-${viewId}`);
+        target.classList.remove('hidden');
+        
+        // 3. Trigger reflow to restart CSS animation smoothly
+        void target.offsetWidth; 
+        target.classList.add('active');
+
+        // 4. Update Bottom Nav Styling
+        if (viewId === 'home' || viewId === 'guide') {
+            document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
+            document.getElementById('nav-guide').className = `flex flex-col items-center transition-colors ${viewId === 'guide' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
+            this.tg.BackButton.hide();
+        } else {
+            this.tg.BackButton.show();
+        }
+        
+        window.scrollTo(0, 0);
+    },
 
         // Show target view
         const target = document.getElementById(`view-${viewId}`);
