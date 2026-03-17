@@ -94,14 +94,14 @@
     <nav class="fixed bottom-0 w-full bg-premiumBlack/90 backdrop-blur-md border-t border-premiumBorder z-40 pb-safe">
         <div class="flex justify-around items-center p-4 max-w-md mx-auto">
             <button onclick="app.navigate('home')" id="nav-home" class="flex flex-col items-center text-premiumWhite transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Catalog</span>
             </button>
             
             <button onclick="app.navigate('cart')" id="nav-cart" class="flex flex-col items-center text-premiumGray hover:text-premiumWhite transition-colors relative">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Cart</span>
-                <span id="cart-badge" class="absolute -top-1 -right-2 bg-premiumWhite text-premiumBlack text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                <span id="cart-badge" class="absolute -top-1 right-1 bg-red-600 text-white text-[10px] font-black w-[18px] h-[18px] rounded-full border-[2px] border-premiumBlack flex items-center justify-center hidden shadow-sm">0</span>
             </button>
         </div>
     </nav>
