@@ -28,12 +28,21 @@ const app = {
     searchQuery: "",
     maxPrice: 1000,
     cart: [], 
+    isPanelOpen: false,
+    isDarkMode: true,
 
     init() {
         this.tg.expand();
         this.tg.ready();
-        this.tg.setHeaderColor('#000000');
-        this.tg.setBackgroundColor('#000000');
+        
+        // Load Saved Theme
+        const savedTheme = localStorage.getItem('brickTheme');
+        if (savedTheme === 'light') {
+            this.isDarkMode = false;
+        } else {
+            this.isDarkMode = true; // Default to Dark
+        }
+        this.applyTheme();
         
         this.renderCatalog();
         this.setupBackButton();
@@ -45,8 +54,62 @@ const app = {
         }
     },
 
+    // --- SIDE PANEL & THEME ---
+    togglePanel() {
+        this.haptic('light');
+        this.isPanelOpen = !this.isPanelOpen;
+        const panel = document.getElementById('side-panel');
+        const overlay = document.getElementById('panel-overlay');
+        
+        if (this.isPanelOpen) {
+            panel.classList.remove('translate-x-full');
+            panel.classList.add('translate-x-0');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.add('opacity-100'), 10);
+        } else {
+            panel.classList.remove('translate-x-0');
+            panel.classList.add('translate-x-full');
+            overlay.classList.remove('opacity-100');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+    },
+
+    toggleTheme() {
+        this.haptic('medium');
+        this.isDarkMode = !this.isDarkMode;
+        localStorage.setItem('brickTheme', this.isDarkMode ? 'dark' : 'light');
+        this.applyTheme();
+    },
+
+    applyTheme() {
+        const knob = document.getElementById('theme-toggle-knob');
+        
+        if (this.isDarkMode) {
+            document.body.classList.add('dark');
+            if(knob) {
+                knob.classList.add('translate-x-6');
+                knob.classList.remove('translate-x-0');
+            }
+            this.tg.setHeaderColor('#000000');
+            this.tg.setBackgroundColor('#000000');
+        } else {
+            document.body.classList.remove('dark');
+            if(knob) {
+                knob.classList.remove('translate-x-6');
+                knob.classList.add('translate-x-0');
+            }
+            // Light mode app colors
+            this.tg.setHeaderColor('#f4f4f5');
+            this.tg.setBackgroundColor('#f4f4f5');
+        }
+    },
+
+    // --- NAVIGATION ---
     navigate(viewId) {
         this.haptic('light');
+        
+        // Always close panel if navigating
+        if(this.isPanelOpen) this.togglePanel();
         
         document.querySelectorAll('.view-section').forEach(el => {
             if (el.id !== `view-${viewId}`) {
@@ -60,7 +123,6 @@ const app = {
         void target.offsetWidth; 
         target.classList.add('active');
 
-        // Update Nav Buttons
         if (viewId === 'home' || viewId === 'cart') {
             document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             document.getElementById('nav-cart').className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
@@ -101,7 +163,6 @@ const app = {
         if (product) {
             this.cart.push(product);
             
-            // Shows a subtle popup letting them know it was added
             if (this.tg.showPopup) {
                 this.tg.showPopup({ title: "Added to Cart", message: `${product.name} is now in your cart.`, buttons: [{type: "ok"}] });
             } else {
@@ -123,25 +184,23 @@ const app = {
         const badge = document.getElementById('cart-badge');
         if (this.cart.length > 0) {
             badge.innerText = this.cart.length;
-            badge.classList.remove('hidden'); // Makes the red badge appear!
+            badge.classList.remove('hidden');
         } else {
-            badge.classList.add('hidden'); // Hides it if cart is empty
+            badge.classList.add('hidden');
         }
     },
 
-    // DIRECT BUY (Single Item) OR CHECKOUT (Multiple Items)
+    // --- TELEGRAM CHECKOUT ---
     openTelegramSupport(productId = null) {
         this.haptic('medium');
         let message = "";
         
-        // Scenario 1: They clicked "Buy now via telegram" on a specific product
         if (productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
                 message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]`;
             }
         } 
-        // Scenario 2: They are checking out from their Cart
         else if (this.cart.length > 0) {
             message = "Hello, I would like to order these products:\n\n";
             let total = 0;
@@ -152,7 +211,6 @@ const app = {
             message += `Total Price: $${total}`;
         }
         
-        // If message is ready, build the link and open the chat
         if (message !== "") {
             const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
             this.tg.openTelegramLink(url);
@@ -175,17 +233,17 @@ const app = {
         }
 
         grid.innerHTML = filteredProducts.map(product => `
-            <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col">
+            <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain">
                 </div>
-                <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder">
+                <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder bg-premiumCard">
                     <div>
                         <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${product.name}</h4>
                     </div>
                     <div class="mt-3 flex justify-between items-center">
                         <span class="text-premiumWhite font-light text-sm tracking-widest">$${product.price}</span>
-                        <div class="w-6 h-6 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite">
+                        <div class="w-6 h-6 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
@@ -200,8 +258,8 @@ const app = {
 
         const content = document.getElementById('product-detail-content');
         content.innerHTML = `
-            <div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6">
-                <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center">
+            <div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm">
+                <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder shadow-inner">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain p-4">
                 </div>
                 <div class="text-center">
@@ -210,15 +268,15 @@ const app = {
                 </div>
             </div>
 
-            <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2">${product.desc}</p>
+            <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${product.desc}</p>
 
             <div class="space-y-3">
-                <button onclick="app.addToCart(${product.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                <button onclick="app.addToCart(${product.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Add to Cart
                 </button>
                 
-                <button onclick="app.openTelegramSupport(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                <button onclick="app.openTelegramSupport(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
                     Buy now via telegram
                 </button>
@@ -231,14 +289,13 @@ const app = {
     renderCart() {
         const content = document.getElementById('cart-content');
         
-        // Empty Cart State - Takes them back to home
         if (this.cart.length === 0) {
             content.innerHTML = `
                 <div class="text-center py-20">
-                    <span class="text-6xl mb-6 block opacity-30">🛒</span>
+                    <span class="text-6xl mb-6 block opacity-30 grayscale filter">🛒</span>
                     <h3 class="text-premiumWhite font-bold uppercase tracking-widest mb-2">Your cart is empty</h3>
-                    <p class="text-sm text-premiumGray mb-8">Looks like you haven't added any knives yet.</p>
-                    <button onclick="app.navigate('home')" class="bg-[#767676] text-premiumWhite font-black uppercase tracking-widest py-3 px-8 rounded-xl active:scale-95 transition-transform">
+                    <p class="text-xs text-premiumGray mb-8">Looks like you haven't added any knives yet.</p>
+                    <button onclick="app.navigate('home')" class="bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-3 px-8 rounded-xl active:scale-95 transition-transform shadow-sm">
                         Go to Shopping
                     </button>
                 </div>
@@ -246,18 +303,17 @@ const app = {
             return;
         }
 
-        // Filled Cart State
         let total = 0;
         let cartItemsHTML = this.cart.map((item, index) => {
             total += item.price;
             return `
-                <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3">
-                    <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2">
+                <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm">
+                    <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner">
                         <img src="${item.image}" class="w-full h-full object-contain">
                     </div>
                     <div class="flex-1">
                         <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
-                        <span class="text-premiumGray text-sm block mt-1">$${item.price}</span>
+                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${item.price}</span>
                     </div>
                     <button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -273,16 +329,21 @@ const app = {
             
             <div class="mt-8 border-t border-premiumBorder pt-6">
                 <div class="flex justify-between items-center mb-6">
-                    <span class="text-premiumGray uppercase tracking-widest font-bold text-sm">Total Price</span>
+                    <span class="text-premiumGray uppercase tracking-widest font-bold text-xs">Total Price</span>
                     <span class="text-2xl font-black text-premiumWhite tracking-widest">$${total}</span>
                 </div>
                 
-                <button onclick="app.openTelegramSupport()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                <button onclick="app.checkout()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
                     Order via Telegram
                 </button>
             </div>
         `;
+    },
+    
+    // Check out function connected directly to the cart button
+    checkout() {
+        this.openTelegramSupport();
     }
 };
 
