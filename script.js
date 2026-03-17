@@ -1,4 +1,11 @@
-// --- 1. PRODUCT DATA ---
+// ==========================================
+// HOW TO ADD YOUR OWN IMAGES:
+// See the text that says "image: https://..." ?
+// Just delete the link inside the quotation marks
+// and paste your own image link! Example:
+// image: "https://my-website.com/my-knife.jpg"
+// ==========================================
+
 const products = [
     { id: 1, name: "Karambit Doppler", price: 12, image: "https://placehold.co/600x600/111111/FFFFFF?text=KARAMBIT\nDOPPLER", desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." },
     { id: 2, name: "Karambit Fade", price: 12, image: "https://placehold.co/600x600/111111/FFFFFF?text=KARAMBIT\n+FADE", desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand." },
@@ -12,10 +19,10 @@ const products = [
     { id: 10, name: "Bowie Knife Tiger Tooth", price: 12, image: "https://placehold.co/600x600/111111/FFFFFF?text=BOWIE+KNIFE\nTIGER", desc: "Premium replica desk toy. Massive display piece featuring a mirror-polished tiger tooth blade." }
 ];
 
-// --- 2. APP LOGIC & ROUTING ---
+// --- APP LOGIC & ROUTING ---
 const app = {
     tg: window.Telegram.WebApp,
-    supportUsername: "Brick Store", // 
+    supportUsername: "chea_vireak", // It now links directly to you!
 
     init() {
         this.tg.expand();
@@ -36,7 +43,6 @@ const app = {
     navigate(viewId) {
         this.haptic('light');
         
-        // 1. Hide all views EXCEPT the target view
         document.querySelectorAll('.view-section').forEach(el => {
             if (el.id !== `view-${viewId}`) {
                 el.classList.remove('active');
@@ -44,15 +50,11 @@ const app = {
             }
         });
 
-        // 2. Show the target view
         const target = document.getElementById(`view-${viewId}`);
         target.classList.remove('hidden');
-        
-        // 3. Trigger reflow to restart CSS animation smoothly
         void target.offsetWidth; 
         target.classList.add('active');
 
-        // 4. Update Bottom Nav Styling
         if (viewId === 'home' || viewId === 'guide') {
             document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             document.getElementById('nav-guide').className = `flex flex-col items-center transition-colors ${viewId === 'guide' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
@@ -69,21 +71,46 @@ const app = {
         this.tg.openTelegramLink(`https://t.me/${this.supportUsername}`);
     },
 
+    // This function takes a picture of the product and saves it to the phone
+    takeScreenshot() {
+        this.haptic('light');
+        const targetElement = document.getElementById('screenshot-target');
+        
+        // Use html2canvas to draw the product box
+        html2canvas(targetElement, {
+            backgroundColor: '#111111', 
+            scale: 2 // High quality
+        }).then(canvas => {
+            const imageData = canvas.toDataURL("image/png");
+            
+            // Create a fake button to force the phone to download it
+            const downloadLink = document.createElement('a');
+            downloadLink.href = imageData;
+            downloadLink.download = 'brickstore-product.png';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            alert('Screenshot downloaded! You can now send it in the chat.');
+        }).catch(err => {
+            alert('Could not download image. Please take a regular screenshot with your phone buttons.');
+        });
+    },
+
     setupBackButton() {
         this.tg.BackButton.onClick(() => {
             this.navigate('home');
         });
     },
 
-    // --- 3. RENDERING ---
     renderCatalog() {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = products.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col">
-                <div class="w-full aspect-square bg-[#0a0a0a] p-3 flex items-center justify-center relative">
+                <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain">
                 </div>
-                <div class="p-3 flex-1 flex flex-col justify-between">
+                <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder">
                     <div>
                         <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${product.name}</h4>
                     </div>
@@ -104,32 +131,27 @@ const app = {
 
         const content = document.getElementById('product-detail-content');
         content.innerHTML = `
-            <div class="relative w-full aspect-video bg-premiumCard rounded-xl overflow-hidden mb-6 border border-premiumBorder flex items-center justify-center group cursor-pointer" onclick="app.haptic('medium'); alert('Video showcase would play here.');">
-                <img src="${product.image}" alt="Video Thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-40 blur-sm">
-                <div class="absolute inset-0 video-overlay"></div>
-                <div class="w-14 h-14 bg-premiumWhite/10 backdrop-blur-md rounded-full flex items-center justify-center border border-premiumWhite/20 z-10 group-active:scale-90 transition-transform">
-                    <svg class="w-6 h-6 text-premiumWhite ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <div id="screenshot-target" class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6">
+                <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain p-4">
                 </div>
-                <span class="absolute bottom-3 left-4 text-[10px] font-bold uppercase tracking-widest text-premiumWhite z-10 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> Product Showcase
-                </span>
+                <div class="text-center">
+                    <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
+                    <span class="text-xl font-light text-premiumGray tracking-widest block">$${product.price}</span>
+                </div>
             </div>
 
-            <div class="mb-8">
-                <h2 class="text-3xl font-black uppercase tracking-widest leading-tight mb-2">${product.name}</h2>
-                <span class="text-2xl font-light text-premiumWhite tracking-widest border-b border-premiumBorder pb-4 block mb-4">$${product.price}</span>
-                <p class="text-sm text-premiumGray leading-relaxed">${product.desc}</p>
-            </div>
+            <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2">${product.desc}</p>
 
             <div class="bg-premiumCard border border-premiumBorder p-4 rounded-xl mb-6">
                 <h4 class="text-xs font-bold uppercase tracking-widest text-premiumWhite mb-2 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Order Instruction
                 </h4>
-                <p class="text-xs text-premiumGray">Take a screenshot of this page and send it to our Telegram support to place your order. No automated checkout.</p>
+                <p class="text-xs text-premiumGray">Click Screenshot below to save the product image, then open chat to send it to us.</p>
             </div>
 
             <div class="space-y-3">
-                <button onclick="app.haptic('light'); alert('Screenshot saved! Now open chat to send it.');" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                <button onclick="app.takeScreenshot()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     Screenshot Product
                 </button>
@@ -144,7 +166,6 @@ const app = {
     }
 };
 
-// Initialize app when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
