@@ -15,7 +15,7 @@ const products = [
 // --- 2. APP LOGIC & ROUTING ---
 const app = {
     tg: window.Telegram.WebApp,
-    supportUsername: "Brick Store", // <-- CHANGE THIS TO YOUR TELEGRAM USERNAME
+    supportUsername: "Brick Store", // 
 
     init() {
         this.tg.expand();
@@ -53,25 +53,6 @@ const app = {
         target.classList.add('active');
 
         // 4. Update Bottom Nav Styling
-        if (viewId === 'home' || viewId === 'guide') {
-            document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
-            document.getElementById('nav-guide').className = `flex flex-col items-center transition-colors ${viewId === 'guide' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
-            this.tg.BackButton.hide();
-        } else {
-            this.tg.BackButton.show();
-        }
-        
-        window.scrollTo(0, 0);
-    },
-
-        // Show target view
-        const target = document.getElementById(`view-${viewId}`);
-        target.classList.remove('hidden');
-        // Trigger reflow to restart CSS animation
-        void target.offsetWidth; 
-        target.classList.add('active');
-
-        // Update Bottom Nav Styling
         if (viewId === 'home' || viewId === 'guide') {
             document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             document.getElementById('nav-guide').className = `flex flex-col items-center transition-colors ${viewId === 'guide' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
