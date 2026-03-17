@@ -1,0 +1,59 @@
+ Core Resets and Overrides 
+html, body {
+    -webkit-tap-highlight-color transparent;
+    scroll-behavior smooth;
+}
+
+ Hide Scrollbar for a clean app feel 
+.hide-scroll-webkit-scrollbar { 
+    display none; 
+}
+.hide-scroll { 
+    -ms-overflow-style none; 
+    scrollbar-width none; 
+}
+
+ Mobile Safe Area for iPhonesAndroids with gesture bars 
+.pb-safe { 
+    padding-bottom calc(1rem + env(safe-area-inset-bottom, 20px)); 
+}
+
+ View Section Animations (Smooth Fade & Slide) 
+.view-section {
+    display none;
+    opacity 0;
+    transform translateY(10px);
+}
+
+.view-section.active {
+    display block;
+    animation fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeSlideUp {
+    0% {
+        opacity 0;
+        transform translateY(15px);
+    }
+    100% {
+        opacity 1;
+        transform translateY(0);
+    }
+}
+
+ Premium Image Loader Effect 
+.img-loading {
+    animation pulseBg 2s infinite;
+    background-color #111111;
+}
+
+@keyframes pulseBg {
+    0% { background-color #111; }
+    50% { background-color #1a1a1a; }
+    100% { background-color #111; }
+}
+
+ Video Player Overlay Simulation 
+.video-overlay {
+    background linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+}
