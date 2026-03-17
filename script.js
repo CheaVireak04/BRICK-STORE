@@ -71,32 +71,14 @@ const app = {
         this.tg.openTelegramLink(`https://t.me/${this.supportUsername}`);
     },
 
-    // 100% RELIABLE SCREENSHOT FOR ANDROID & IPHONE
+    // SIMPLE & FOOLPROOF SCREENSHOT METHOD
     takeScreenshot() {
-        this.haptic('light');
-        const targetElement = document.getElementById('screenshot-target');
+        this.haptic('medium');
         
-        // Use html2canvas to draw the product box
-        html2canvas(targetElement, {
-            backgroundColor: '#111111', 
-            scale: 2, // High quality
-            useCORS: true // Allows it to process images properly
-        }).then(canvas => {
-            const imageData = canvas.toDataURL("image/png");
-            
-            // Pop open the modal window with the generated image
-            const modal = document.getElementById('screenshot-modal');
-            const resultImg = document.getElementById('screenshot-result');
-            
-            resultImg.src = imageData;
-            modal.classList.remove('hidden');
-            
-            if (this.tg.HapticFeedback) {
-                this.tg.HapticFeedback.notificationOccurred('success');
-            }
-        }).catch(err => {
-            alert('Could not capture image. Please just take a normal screenshot with your phone buttons!');
-        });
+        // Uses Telegram's native popup window (Works perfectly on iOS, Android, and Web)
+        this.tg.showAlert(
+            "📸 HOW TO ORDER:\n\n1. Use your phone's physical buttons to take a screenshot of this screen right now.\n\n2. Tap 'Order via Telegram' below.\n\n3. Send us the photo in the chat!"
+        );
     },
 
     setupBackButton() {
