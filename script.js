@@ -22,7 +22,7 @@ const products = [
 // --- APP LOGIC & ROUTING ---
 const app = {
     tg: window.Telegram.WebApp,
-    supportUsername: "chea_vireak",
+    supportUsername: "Chea_Vireak", // Updated to your exact username
     
     // Search & Filter State
     searchQuery: "",
@@ -70,12 +70,25 @@ const app = {
         window.scrollTo(0, 0);
     },
 
-    openTelegramSupport() {
+    // AUTOMATED MESSAGE GENERATOR
+    openTelegramSupport(productId = null) {
         this.haptic('medium');
-        this.tg.openTelegramLink(`https://t.me/${this.supportUsername}`);
+        
+        let url = `https://t.me/${this.supportUsername}`;
+        
+        // If the user clicks from a specific product page, build the custom message
+        if (productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                const message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price}\n${product.image}`;
+                // encodeURIComponent turns spaces and symbols into a web-safe link
+                url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
+            }
+        }
+        
+        this.tg.openTelegramLink(url);
     },
 
-    // SIMPLE NATIVE SCREENSHOT POPUP
     takeScreenshot() {
         this.haptic('medium');
         this.tg.showAlert(
@@ -89,37 +102,31 @@ const app = {
         });
     },
 
-    // NEW: Handle typing in the search bar
     handleSearch(event) {
         this.searchQuery = event.target.value.toLowerCase();
         this.renderCatalog();
     },
 
-    // NEW: Handle sliding the price filter
     handlePriceFilter(event) {
         this.maxPrice = parseInt(event.target.value);
         document.getElementById('priceValue').innerText = '$' + this.maxPrice;
         this.renderCatalog();
     },
 
-    // UPDATED: Now filters products before rendering them!
     renderCatalog() {
         const grid = document.getElementById('product-grid');
         
-        // Filter the products array based on user input
         const filteredProducts = products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
             const matchesPrice = product.price <= this.maxPrice;
             return matchesSearch && matchesPrice;
         });
 
-        // Show a message if no products match the search/filter
         if (filteredProducts.length === 0) {
             grid.innerHTML = `<div class="col-span-2 text-center py-10 text-premiumGray text-sm">No items found matching your search.</div>`;
             return;
         }
 
-        // Draw the matching products
         grid.innerHTML = filteredProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
@@ -170,7 +177,7 @@ const app = {
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     Screenshot Product
                 </button>
-                <button onclick="app.openTelegramSupport()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                <button onclick="app.openTelegramSupport(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
                     Order via Telegram
                 </button>
