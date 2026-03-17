@@ -1,30 +1,87 @@
 // ==========================================
-// HOW TO ADD YOUR OWN IMAGES:
-// See the text that says "image: https://..." ?
-// Just delete the link inside the quotation marks
-// and paste your own image link! Example:
-// image: "https://my-website.com/my-knife.jpg"
+// 🛒 PRODUCT DATA (EDIT PRICES & IMAGES HERE)
 // ==========================================
-
 const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        price: 12,        // <-- CHANGE DISCOUNTED PRICE HERE (The amount they pay)
-        oldPrice: 15,     // <-- CHANGE ORIGINAL PRICE HERE (Shows with strikethrough)
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." 
     },
-    { id: 1, name: "Karambit Doppler", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." },
-    { id: 2, name: "Karambit Fade", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand." },
-    { id: 3, name: "M9 Bayonet Crimson Web", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", desc: "Premium replica desk toy. Factory new look with distinct webbing patterns. Heavy-duty metal construction." },
-    { id: 4, name: "Butterfly Knife Marble Fade", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png", desc: "Premium replica desk toy. Smooth flipping action mechanism with stunning tricolor marble aesthetic." },
-    { id: 5, name: "Butterfly Knife Tiger Tooth", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/616083695/playside.png", desc: "Premium replica desk toy. Golden anodized finish with hand-machined tiger stripes." },
-    { id: 6, name: "Talon Knife Slaughter", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png", desc: "Premium replica desk toy. Ivory-style handle with a beautiful crimson slaughter pattern blade." },
-    { id: 7, name: "Huntsman Knife Doppler", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png", desc: "Premium replica desk toy. Aggressive serrated spine paired with a deep ruby doppler finish." },
-    { id: 8, name: "Flip Knife Fade", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png", desc: "Premium replica desk toy. Sleek, foldable design featuring a full-blade chromatic fade." },
-    { id: 9, name: "Shadow Daggers Marble Fade", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png", desc: "Premium replica desk toy. Dual-wield push daggers with matching marble fade patterns." },
-    { id: 10, name: "Bowie Knife Tiger Tooth", price: 12, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", desc: "Premium replica desk toy. Massive display piece featuring a mirror-polished tiger tooth blade." }
+    { 
+        id: 2, 
+        name: "Karambit Fade", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", 
+        desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand." 
+    },
+    { 
+        id: 3, 
+        name: "M9 Bayonet Crimson Web", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", 
+        desc: "Premium replica desk toy. Factory new look with distinct webbing patterns. Heavy-duty metal construction." 
+    },
+    { 
+        id: 4, 
+        name: "Butterfly Knife Marble Fade", 
+        price: 12, 
+        oldPrice: 18, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png", 
+        desc: "Premium replica desk toy. Smooth flipping action mechanism with stunning tricolor marble aesthetic." 
+    },
+    { 
+        id: 5, 
+        name: "Butterfly Knife Tiger Tooth", 
+        price: 12, 
+        oldPrice: 18, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/616083695/playside.png", 
+        desc: "Premium replica desk toy. Golden anodized finish with hand-machined tiger stripes." 
+    },
+    { 
+        id: 6, 
+        name: "Talon Knife Slaughter", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png", 
+        desc: "Premium replica desk toy. Ivory-style handle with a beautiful crimson slaughter pattern blade." 
+    },
+    { 
+        id: 7, 
+        name: "Huntsman Knife Doppler", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png", 
+        desc: "Premium replica desk toy. Aggressive serrated spine paired with a deep ruby doppler finish." 
+    },
+    { 
+        id: 8, 
+        name: "Flip Knife Fade", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png", 
+        desc: "Premium replica desk toy. Sleek, foldable design featuring a full-blade chromatic fade." 
+    },
+    { 
+        id: 9, 
+        name: "Shadow Daggers Marble Fade", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png", 
+        desc: "Premium replica desk toy. Dual-wield push daggers with matching marble fade patterns." 
+    },
+    { 
+        id: 10, 
+        name: "Bowie Knife Tiger Tooth", 
+        price: 12, 
+        oldPrice: 15, 
+        image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", 
+        desc: "Premium replica desk toy. Massive display piece featuring a mirror-polished tiger tooth blade." 
+    }
 ];
 
 // --- APP LOGIC & ROUTING ---
@@ -48,7 +105,7 @@ const app = {
         if (savedTheme === 'light') {
             this.isDarkMode = false;
         } else {
-            this.isDarkMode = true; // Default to Dark
+            this.isDarkMode = true; 
         }
         this.applyTheme();
         
@@ -106,7 +163,6 @@ const app = {
                 knob.classList.remove('translate-x-6');
                 knob.classList.add('translate-x-0');
             }
-            // Light mode app colors
             this.tg.setHeaderColor('#f4f4f5');
             this.tg.setBackgroundColor('#f4f4f5');
         }
@@ -116,7 +172,6 @@ const app = {
     navigate(viewId) {
         this.haptic('light');
         
-        // Always close panel if navigating
         if(this.isPanelOpen) this.togglePanel();
         
         document.querySelectorAll('.view-section').forEach(el => {
@@ -243,14 +298,18 @@ const app = {
         grid.innerHTML = filteredProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
                 </div>
                 <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder bg-premiumCard">
                     <div>
                         <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${product.name}</h4>
                     </div>
+                    
                     <div class="mt-3 flex justify-between items-center">
-                        <span class="text-premiumWhite font-light text-sm tracking-widest">$${product.price}</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${product.price}</span>
+                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${product.oldPrice}</span>
+                        </div>
                         <div class="w-6 h-6 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
@@ -268,11 +327,15 @@ const app = {
         content.innerHTML = `
             <div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm">
                 <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder shadow-inner">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain p-4">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain p-4 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                 </div>
                 <div class="text-center">
                     <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
-                    <span class="text-xl font-light text-premiumGray tracking-widest block">$${product.price}</span>
+                    
+                    <div class="flex justify-center items-baseline gap-3 mb-2">
+                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${product.price}</span>
+                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${product.oldPrice}</span>
+                    </div>
                 </div>
             </div>
 
@@ -317,7 +380,7 @@ const app = {
             return `
                 <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm">
                     <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner">
-                        <img src="${item.image}" class="w-full h-full object-contain">
+                        <img src="${item.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]">
                     </div>
                     <div class="flex-1">
                         <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
@@ -349,7 +412,6 @@ const app = {
         `;
     },
     
-    // Check out function connected directly to the cart button
     checkout() {
         this.openTelegramSupport();
     }
