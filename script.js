@@ -5,32 +5,32 @@ const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." 
     },
     { 
         id: 2, 
         name: "Karambit Fade", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", 
         desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand." 
     },
     { 
         id: 3, 
         name: "M9 Bayonet Crimson Web", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", 
         desc: "Premium replica desk toy. Factory new look with distinct webbing patterns. Heavy-duty metal construction." 
     },
     { 
         id: 4, 
         name: "Butterfly Knife Marble Fade", 
-        price: 12, 
-        oldPrice: 18, 
+        price: 12.00, 
+        oldPrice: 18.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png", 
         desc: "Premium replica desk toy. Smooth flipping action mechanism with stunning tricolor marble aesthetic." 
     },
@@ -45,40 +45,40 @@ const products = [
     { 
         id: 6, 
         name: "Talon Knife Slaughter", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png", 
         desc: "Premium replica desk toy. Ivory-style handle with a beautiful crimson slaughter pattern blade." 
     },
     { 
         id: 7, 
         name: "Huntsman Knife Doppler", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png", 
         desc: "Premium replica desk toy. Aggressive serrated spine paired with a deep ruby doppler finish." 
     },
     { 
         id: 8, 
         name: "Flip Knife Fade", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png", 
         desc: "Premium replica desk toy. Sleek, foldable design featuring a full-blade chromatic fade." 
     },
     { 
         id: 9, 
         name: "Shadow Daggers Marble Fade", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png", 
         desc: "Premium replica desk toy. Dual-wield push daggers with matching marble fade patterns." 
     },
     { 
         id: 10, 
         name: "Bowie Knife Tiger Tooth", 
-        price: 12, 
-        oldPrice: 15, 
+        price: 12.00, 
+        oldPrice: 15.00, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", 
         desc: "Premium replica desk toy. Massive display piece featuring a mirror-polished tiger tooth blade." 
     }
