@@ -27,7 +27,7 @@ const app = {
     // State Data
     searchQuery: "",
     maxPrice: 1000,
-    cart: [], // Memory for the shopping cart
+    cart: [], 
 
     init() {
         this.tg.expand();
@@ -69,7 +69,6 @@ const app = {
             this.tg.BackButton.show();
         }
 
-        // If navigating to cart, render the cart items
         if (viewId === 'cart') {
             this.renderCart();
         }
@@ -101,7 +100,14 @@ const app = {
         const product = products.find(p => p.id === id);
         if (product) {
             this.cart.push(product);
-            this.tg.showAlert(`Added ${product.name} to your cart!`);
+            
+            // Shows a subtle popup letting them know it was added
+            if (this.tg.showPopup) {
+                this.tg.showPopup({ title: "Added to Cart", message: `${product.name} is now in your cart.`, buttons: [{type: "ok"}] });
+            } else {
+                alert(`Added ${product.name} to your cart!`);
+            }
+            
             this.updateCartBadge();
         }
     },
@@ -117,31 +123,40 @@ const app = {
         const badge = document.getElementById('cart-badge');
         if (this.cart.length > 0) {
             badge.innerText = this.cart.length;
-            badge.classList.remove('hidden');
+            badge.classList.remove('hidden'); // Makes the red badge appear!
         } else {
-            badge.classList.add('hidden');
+            badge.classList.add('hidden'); // Hides it if cart is empty
         }
     },
 
-    // CHECKOUT: Generates the clean message without ugly links
-    checkout() {
+    // DIRECT BUY (Single Item) OR CHECKOUT (Multiple Items)
+    openTelegramSupport(productId = null) {
         this.haptic('medium');
-        if (this.cart.length === 0) return;
-
-        let message = "Hello, I would like to order these products:\n\n";
-        let total = 0;
-
-        // Build the list of products
-        this.cart.forEach((product, index) => {
-            message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]\n\n`;
-            total += product.price;
-        });
-
-        message += `Total Price: $${total}`;
-
-        // Create the Telegram link and open it
-        const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
-        this.tg.openTelegramLink(url);
+        let message = "";
+        
+        // Scenario 1: They clicked "Buy now via telegram" on a specific product
+        if (productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]`;
+            }
+        } 
+        // Scenario 2: They are checking out from their Cart
+        else if (this.cart.length > 0) {
+            message = "Hello, I would like to order these products:\n\n";
+            let total = 0;
+            this.cart.forEach((product, index) => {
+                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]\n\n`;
+                total += product.price;
+            });
+            message += `Total Price: $${total}`;
+        }
+        
+        // If message is ready, build the link and open the chat
+        if (message !== "") {
+            const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
+            this.tg.openTelegramLink(url);
+        }
     },
 
     // --- RENDERING VIEWS ---
@@ -203,8 +218,9 @@ const app = {
                     Add to Cart
                 </button>
                 
-                <button onclick="app.navigate('cart')" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
-                    View Cart
+                <button onclick="app.openTelegramSupport(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
+                    Buy now via telegram
                 </button>
             </div>
         `;
@@ -215,7 +231,7 @@ const app = {
     renderCart() {
         const content = document.getElementById('cart-content');
         
-        // Empty Cart State
+        // Empty Cart State - Takes them back to home
         if (this.cart.length === 0) {
             content.innerHTML = `
                 <div class="text-center py-20">
@@ -261,7 +277,7 @@ const app = {
                     <span class="text-2xl font-black text-premiumWhite tracking-widest">$${total}</span>
                 </div>
                 
-                <button onclick="app.checkout()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                <button onclick="app.openTelegramSupport()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
                     Order via Telegram
                 </button>
