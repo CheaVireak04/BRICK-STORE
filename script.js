@@ -5,32 +5,32 @@ const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand." 
     },
     { 
         id: 2, 
         name: "Karambit Fade", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", 
         desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand." 
     },
     { 
         id: 3, 
         name: "M9 Bayonet Crimson Web", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", 
         desc: "Premium replica desk toy. Factory new look with distinct webbing patterns. Heavy-duty metal construction." 
     },
     { 
         id: 4, 
         name: "Butterfly Knife Marble Fade", 
-        price: 12.00, 
-        oldPrice: 18.00, 
+        price: 12, 
+        oldPrice: 18, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png", 
         desc: "Premium replica desk toy. Smooth flipping action mechanism with stunning tricolor marble aesthetic." 
     },
@@ -45,40 +45,40 @@ const products = [
     { 
         id: 6, 
         name: "Talon Knife Slaughter", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png", 
         desc: "Premium replica desk toy. Ivory-style handle with a beautiful crimson slaughter pattern blade." 
     },
     { 
         id: 7, 
         name: "Huntsman Knife Doppler", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png", 
         desc: "Premium replica desk toy. Aggressive serrated spine paired with a deep ruby doppler finish." 
     },
     { 
         id: 8, 
         name: "Flip Knife Fade", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png", 
         desc: "Premium replica desk toy. Sleek, foldable design featuring a full-blade chromatic fade." 
     },
     { 
         id: 9, 
         name: "Shadow Daggers Marble Fade", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png", 
         desc: "Premium replica desk toy. Dual-wield push daggers with matching marble fade patterns." 
     },
     { 
         id: 10, 
         name: "Bowie Knife Tiger Tooth", 
-        price: 12.00, 
-        oldPrice: 15.00, 
+        price: 12, 
+        oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", 
         desc: "Premium replica desk toy. Massive display piece featuring a mirror-polished tiger tooth blade." 
     }
@@ -215,7 +215,8 @@ const app = {
 
     handlePriceFilter(event) {
         this.maxPrice = parseInt(event.target.value);
-        document.getElementById('priceValue').innerText = '$' + this.maxPrice;
+        // Added .toFixed(2) so the slider price also shows .00
+        document.getElementById('priceValue').innerText = '$' + this.maxPrice.toFixed(2);
         this.renderCatalog();
     },
 
@@ -261,17 +262,20 @@ const app = {
         if (productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]`;
+                // Added .toFixed(2) to the message price
+                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]`;
             }
         } 
         else if (this.cart.length > 0) {
             message = "Hello, I would like to order these products:\n\n";
             let total = 0;
             this.cart.forEach((product, index) => {
-                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]\n\n`;
+                // Added .toFixed(2) to cart item message
+                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]\n\n`;
                 total += product.price;
             });
-            message += `Total Price: $${total}`;
+            // Added .toFixed(2) to the total price message
+            message += `Total Price: $${total.toFixed(2)}`;
         }
         
         if (message !== "") {
@@ -307,8 +311,8 @@ const app = {
                     
                     <div class="mt-3 flex justify-between items-center">
                         <div class="flex items-baseline gap-2">
-                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${product.price}</span>
-                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${product.oldPrice}</span>
+                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${product.price.toFixed(2)}</span>
+                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${product.oldPrice.toFixed(2)}</span>
                         </div>
                         <div class="w-6 h-6 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -333,8 +337,8 @@ const app = {
                     <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
                     
                     <div class="flex justify-center items-baseline gap-3 mb-2">
-                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${product.price}</span>
-                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${product.oldPrice}</span>
+                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${product.price.toFixed(2)}</span>
+                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${product.oldPrice.toFixed(2)}</span>
                     </div>
                 </div>
             </div>
@@ -384,7 +388,7 @@ const app = {
                     </div>
                     <div class="flex-1">
                         <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
-                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${item.price}</span>
+                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${item.price.toFixed(2)}</span>
                     </div>
                     <button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -401,7 +405,7 @@ const app = {
             <div class="mt-8 border-t border-premiumBorder pt-6">
                 <div class="flex justify-between items-center mb-6">
                     <span class="text-premiumGray uppercase tracking-widest font-bold text-xs">Total Price</span>
-                    <span class="text-2xl font-black text-premiumWhite tracking-widest">$${total}</span>
+                    <span class="text-2xl font-black text-premiumWhite tracking-widest">$${total.toFixed(2)}</span>
                 </div>
                 
                 <button onclick="app.checkout()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
