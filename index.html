@@ -83,38 +83,10 @@
             <div id="product-detail-content"></div>
         </section>
 
-        <section id="view-guide" class="view-section hidden">
-            <h2 class="text-2xl font-black uppercase tracking-widest mb-2">How to Order</h2>
-            <p class="text-sm text-premiumGray mb-8">We handle all orders personally to ensure premium service and quality checks before shipping.</p>
-
-            <div class="space-y-4 mb-10">
-                <div class="bg-premiumCard border border-premiumBorder p-5 rounded-xl flex items-start gap-4">
-                    <span class="text-2xl font-black text-premiumWhite opacity-50">1</span>
-                    <div>
-                        <h4 class="font-bold uppercase tracking-wider text-sm mb-1">Take a Screenshot</h4>
-                        <p class="text-xs text-premiumGray leading-relaxed">Find the knife you want from our catalog and click the "Screenshot" button.</p>
-                    </div>
-                </div>
-                <div class="bg-premiumCard border border-premiumBorder p-5 rounded-xl flex items-start gap-4">
-                    <span class="text-2xl font-black text-premiumWhite opacity-50">2</span>
-                    <div>
-                        <h4 class="font-bold uppercase tracking-wider text-sm mb-1">Send us a DM</h4>
-                        <p class="text-xs text-premiumGray leading-relaxed">Click the contact button below to open a direct Telegram chat with @chea_vireak.</p>
-                    </div>
-                </div>
-                <div class="bg-premiumCard border border-premiumBorder p-5 rounded-xl flex items-start gap-4">
-                    <span class="text-2xl font-black text-premiumWhite opacity-50">3</span>
-                    <div>
-                        <h4 class="font-bold uppercase tracking-wider text-sm mb-1">Confirm & Deliver</h4>
-                        <p class="text-xs text-premiumGray leading-relaxed">Send the screenshot to the chat, arrange your delivery details, and confirm payment.</p>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="app.openTelegramSupport()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-5 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
-                Open Telegram Chat
-            </button>
+        <section id="view-cart" class="view-section hidden">
+            <h2 class="text-2xl font-black uppercase tracking-widest mb-6 border-b border-premiumBorder pb-4">Your Cart</h2>
+            
+            <div id="cart-content"></div>
         </section>
 
     </main>
@@ -122,12 +94,14 @@
     <nav class="fixed bottom-0 w-full bg-premiumBlack/90 backdrop-blur-md border-t border-premiumBorder z-40 pb-safe">
         <div class="flex justify-around items-center p-4 max-w-md mx-auto">
             <button onclick="app.navigate('home')" id="nav-home" class="flex flex-col items-center text-premiumWhite transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Catalog</span>
             </button>
-            <button onclick="app.navigate('guide')" id="nav-guide" class="flex flex-col items-center text-premiumGray hover:text-premiumWhite transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                <span class="text-[9px] font-bold uppercase tracking-widest">How to Order</span>
+            
+            <button onclick="app.navigate('cart')" id="nav-cart" class="flex flex-col items-center text-premiumGray hover:text-premiumWhite transition-colors relative">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Cart</span>
+                <span id="cart-badge" class="absolute -top-1 -right-2 bg-premiumWhite text-premiumBlack text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
             </button>
         </div>
     </nav>
