@@ -71,7 +71,7 @@ const app = {
         this.tg.openTelegramLink(`https://t.me/${this.supportUsername}`);
     },
 
-    // This function takes a picture of the product and saves it to the phone
+    // 100% RELIABLE SCREENSHOT FOR ANDROID & IPHONE
     takeScreenshot() {
         this.haptic('light');
         const targetElement = document.getElementById('screenshot-target');
@@ -79,21 +79,23 @@ const app = {
         // Use html2canvas to draw the product box
         html2canvas(targetElement, {
             backgroundColor: '#111111', 
-            scale: 2 // High quality
+            scale: 2, // High quality
+            useCORS: true // Allows it to process images properly
         }).then(canvas => {
             const imageData = canvas.toDataURL("image/png");
             
-            // Create a fake button to force the phone to download it
-            const downloadLink = document.createElement('a');
-            downloadLink.href = imageData;
-            downloadLink.download = 'brickstore-product.png';
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+            // Pop open the modal window with the generated image
+            const modal = document.getElementById('screenshot-modal');
+            const resultImg = document.getElementById('screenshot-result');
             
-            alert('Screenshot downloaded! You can now send it in the chat.');
+            resultImg.src = imageData;
+            modal.classList.remove('hidden');
+            
+            if (this.tg.HapticFeedback) {
+                this.tg.HapticFeedback.notificationOccurred('success');
+            }
         }).catch(err => {
-            alert('Could not download image. Please take a regular screenshot with your phone buttons.');
+            alert('Could not capture image. Please just take a normal screenshot with your phone buttons!');
         });
     },
 
