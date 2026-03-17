@@ -11,8 +11,6 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,7 +39,7 @@
 <body class="bg-premiumBlack text-premiumWhite font-sans antialiased pb-24 select-none hide-scroll">
 
     <header class="fixed top-0 w-full bg-premiumBlack/90 backdrop-blur-md border-b border-premiumBorder z-50 px-4 py-4 flex justify-between items-center">
-        <h1 class="text-xl font-black tracking-[0.2em] uppercase">BRICK<span class="font-light text-premiumGray">STORE by REAK</span></h1>
+        <h1 class="text-xl font-black tracking-[0.2em] uppercase">BRICK<span class="font-light text-premiumGray">STORE</span></h1>
         <svg class="w-6 h-6 text-premiumWhite" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
     </header>
 
@@ -49,9 +47,9 @@
         
         <section id="view-home" class="view-section active">
             <div class="relative w-full h-48 bg-premiumCard rounded-xl overflow-hidden mb-8 border border-premiumBorder flex items-center justify-center">
-                <img src="https://placehold.co/800x400/111111/FFFFFF?text=." alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                <img src="https://placehold.co/800x400/111111/FFFFFF?text=PREMIUM+COLLECTIBLES" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover opacity-50">
                 <div class="relative z-10 text-center px-4">
-                    <h2 class="text-3xl font-black uppercase tracking-widest mb-1">CS2 Knife Collection</h2>
+                    <h2 class="text-3xl font-black uppercase tracking-widest mb-1">CS2 DESK TOYS</h2>
                     <p class="text-xs text-premiumGray uppercase tracking-widest leading-relaxed mt-2">Limited-style CS2 knife replicas crafted for collectors.</p>
                 </div>
             </div>
@@ -110,21 +108,6 @@
         </section>
 
     </main>
-
-    <div id="screenshot-modal" class="fixed inset-0 bg-black/95 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-md transition-opacity">
-        <div class="bg-premiumCard border border-premiumBorder p-5 rounded-2xl max-w-sm w-full text-center shadow-2xl">
-            <h3 class="text-premiumWhite font-black uppercase tracking-widest mb-2">Save Screenshot</h3>
-            <p class="text-xs text-premiumGray mb-4 leading-relaxed">Tap and hold (long-press) the image below to save it to your Photos, then send it to us!</p>
-            
-            <div class="rounded-xl overflow-hidden border border-premiumBorder mb-6 bg-black shadow-inner">
-                <img id="screenshot-result" src="" alt="Screenshot" class="w-full h-auto">
-            </div>
-            
-            <button onclick="document.getElementById('screenshot-modal').classList.add('hidden')" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform">
-                Close & Return
-            </button>
-        </div>
-    </div>
 
     <nav class="fixed bottom-0 w-full bg-premiumBlack/90 backdrop-blur-md border-t border-premiumBorder z-40 pb-safe">
         <div class="flex justify-around items-center p-4 max-w-md mx-auto">
