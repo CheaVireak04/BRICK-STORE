@@ -263,7 +263,7 @@ const app = {
             const product = products.find(p => p.id === productId);
             if (product) {
                 // Added .toFixed(2) to the message price
-                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]`;
+                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n`;
             }
         } 
         else if (this.cart.length > 0) {
@@ -271,7 +271,7 @@ const app = {
             let total = 0;
             this.cart.forEach((product, index) => {
                 // Added .toFixed(2) to cart item message
-                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]\n\n`;
+                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n\n\n`;
                 total += product.price;
             });
             // Added .toFixed(2) to the total price message
