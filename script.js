@@ -22,11 +22,12 @@ const products = [
 // --- APP LOGIC & ROUTING ---
 const app = {
     tg: window.Telegram.WebApp,
-    supportUsername: "Chea_Vireak", // Updated to your exact username
+    supportUsername: "Chea_Vireak",
     
-    // Search & Filter State
+    // State Data
     searchQuery: "",
     maxPrice: 1000,
+    cart: [], // Memory for the shopping cart
 
     init() {
         this.tg.expand();
@@ -59,41 +60,21 @@ const app = {
         void target.offsetWidth; 
         target.classList.add('active');
 
-        if (viewId === 'home' || viewId === 'guide') {
+        // Update Nav Buttons
+        if (viewId === 'home' || viewId === 'cart') {
             document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
-            document.getElementById('nav-guide').className = `flex flex-col items-center transition-colors ${viewId === 'guide' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
+            document.getElementById('nav-cart').className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             this.tg.BackButton.hide();
         } else {
             this.tg.BackButton.show();
         }
-        
-        window.scrollTo(0, 0);
-    },
 
-    // AUTOMATED MESSAGE GENERATOR
-    openTelegramSupport(productId = null) {
-        this.haptic('medium');
-        
-        let url = `https://t.me/${this.supportUsername}`;
-        
-        // If the user clicks from a specific product page, build the custom message
-        if (productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                const message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price}\n${product.image}`;
-                // encodeURIComponent turns spaces and symbols into a web-safe link
-                url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
-            }
+        // If navigating to cart, render the cart items
+        if (viewId === 'cart') {
+            this.renderCart();
         }
         
-        this.tg.openTelegramLink(url);
-    },
-
-    takeScreenshot() {
-        this.haptic('medium');
-        this.tg.showAlert(
-            "📸 HOW TO ORDER:\n\n1. Use your phone's physical buttons to take a screenshot of this screen right now.\n\n2. Tap 'Order via Telegram' below.\n\n3. Send us the photo in the chat!"
-        );
+        window.scrollTo(0, 0);
     },
 
     setupBackButton() {
@@ -102,6 +83,7 @@ const app = {
         });
     },
 
+    // --- SEARCH & FILTER ---
     handleSearch(event) {
         this.searchQuery = event.target.value.toLowerCase();
         this.renderCatalog();
@@ -113,6 +95,56 @@ const app = {
         this.renderCatalog();
     },
 
+    // --- CART LOGIC ---
+    addToCart(id) {
+        this.haptic('medium');
+        const product = products.find(p => p.id === id);
+        if (product) {
+            this.cart.push(product);
+            this.tg.showAlert(`Added ${product.name} to your cart!`);
+            this.updateCartBadge();
+        }
+    },
+
+    removeFromCart(index) {
+        this.haptic('light');
+        this.cart.splice(index, 1);
+        this.updateCartBadge();
+        this.renderCart();
+    },
+
+    updateCartBadge() {
+        const badge = document.getElementById('cart-badge');
+        if (this.cart.length > 0) {
+            badge.innerText = this.cart.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    },
+
+    // CHECKOUT: Generates the clean message without ugly links
+    checkout() {
+        this.haptic('medium');
+        if (this.cart.length === 0) return;
+
+        let message = "Hello, I would like to order these products:\n\n";
+        let total = 0;
+
+        // Build the list of products
+        this.cart.forEach((product, index) => {
+            message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price}\n[image]\n\n`;
+            total += product.price;
+        });
+
+        message += `Total Price: $${total}`;
+
+        // Create the Telegram link and open it
+        const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
+        this.tg.openTelegramLink(url);
+    },
+
+    // --- RENDERING VIEWS ---
     renderCatalog() {
         const grid = document.getElementById('product-grid');
         
@@ -153,7 +185,7 @@ const app = {
 
         const content = document.getElementById('product-detail-content');
         content.innerHTML = `
-            <div id="screenshot-target" class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6">
+            <div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6">
                 <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain p-4">
                 </div>
@@ -165,26 +197,76 @@ const app = {
 
             <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2">${product.desc}</p>
 
-            <div class="bg-premiumCard border border-premiumBorder p-4 rounded-xl mb-6">
-                <h4 class="text-xs font-bold uppercase tracking-widest text-premiumWhite mb-2 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Order Instruction
-                </h4>
-                <p class="text-xs text-premiumGray">Click Screenshot below to save the product image, then open chat to send it to us.</p>
-            </div>
-
             <div class="space-y-3">
-                <button onclick="app.takeScreenshot()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    Screenshot Product
+                <button onclick="app.addToCart(${product.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Add to Cart
                 </button>
-                <button onclick="app.openTelegramSupport(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
-                    Order via Telegram
+                
+                <button onclick="app.navigate('cart')" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                    View Cart
                 </button>
             </div>
         `;
         
         this.navigate('product');
+    },
+
+    renderCart() {
+        const content = document.getElementById('cart-content');
+        
+        // Empty Cart State
+        if (this.cart.length === 0) {
+            content.innerHTML = `
+                <div class="text-center py-20">
+                    <span class="text-6xl mb-6 block opacity-30">🛒</span>
+                    <h3 class="text-premiumWhite font-bold uppercase tracking-widest mb-2">Your cart is empty</h3>
+                    <p class="text-sm text-premiumGray mb-8">Looks like you haven't added any knives yet.</p>
+                    <button onclick="app.navigate('home')" class="bg-[#767676] text-premiumWhite font-black uppercase tracking-widest py-3 px-8 rounded-xl active:scale-95 transition-transform">
+                        Go to Shopping
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        // Filled Cart State
+        let total = 0;
+        let cartItemsHTML = this.cart.map((item, index) => {
+            total += item.price;
+            return `
+                <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3">
+                    <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2">
+                        <img src="${item.image}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
+                        <span class="text-premiumGray text-sm block mt-1">$${item.price}</span>
+                    </div>
+                    <button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        content.innerHTML = `
+            <div>
+                ${cartItemsHTML}
+            </div>
+            
+            <div class="mt-8 border-t border-premiumBorder pt-6">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-premiumGray uppercase tracking-widest font-bold text-sm">Total Price</span>
+                    <span class="text-2xl font-black text-premiumWhite tracking-widest">$${total}</span>
+                </div>
+                
+                <button onclick="app.checkout()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
+                    Order via Telegram
+                </button>
+            </div>
+        `;
     }
 };
 
