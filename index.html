@@ -39,12 +39,16 @@
             visibility: hidden;
             transform: translateY(15px) scale(0.98);
             transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+            height: 0;
+            overflow: hidden;
         }
         .view-section.active {
             position: relative;
             opacity: 1;
             visibility: visible;
             transform: translateY(0) scale(1);
+            height: auto;
+            overflow: visible;
         }
 
         /* Smooth transitions for theme changes */
@@ -110,7 +114,7 @@
                     <img src="./hero-banner.jpg" alt="CS2 Premium Knives" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/20"></div>
                     <div class="relative z-10 text-center px-4">
-                        <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">KNIFE COLLECTIONS</h2>
+                        <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">CS2 DESK TOYS</h2>
                         <p class="text-[10px] text-white font-bold uppercase tracking-widest leading-relaxed mt-2 drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Limited-style CS2 knife replicas crafted for collectors.</p>
                     </div>
                 </div>
@@ -146,7 +150,7 @@
         </section>
 
         <section id="view-cart" class="view-section">
-            <h2 class="text-2xl font-black uppercase tracking-widest mb-6 border-b border-premiumBorder pb-4 transition-colors">Your Cart</h2>
+            <h2 class="text-2xl font-black uppercase tracking-widest mb-6 border-b border-premiumBorder pb-4 transition-colors text-center">Your Cart</h2>
             <div id="cart-content"></div>
         </section>
     </main>
