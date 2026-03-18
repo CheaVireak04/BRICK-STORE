@@ -18,7 +18,7 @@ const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        // price: 12, 
+        price: 12, 
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand.",
