@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRICK STORE | Premium Desk Toys</title>
+    <title>BRICK STORE</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
             --text-sec: #a3a3a3;
         }
         
-        /* 2. PREMIUM PAGE TRANSITION ANIMATIONS */
+        /* PREMIUM PAGE TRANSITION ANIMATIONS */
         .view-section {
             position: absolute;
             width: 100%;
@@ -51,11 +51,7 @@
             overflow: visible;
         }
 
-        /* Smooth transitions for theme changes */
-        body { transition: background-color 0.3s ease, color 0.3s ease; }
-        .transition-colors { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        
-        /* NEW: CUSTOM DUAL RANGE SLIDER STYLING */
+        /* CUSTOM DUAL RANGE SLIDER STYLING */
         .dual-slider-container { position: relative; width: 100%; height: 4px; background-color: var(--border); border-radius: 4px; margin-top: 18px; margin-bottom: 12px; }
         .dual-slider-track { position: absolute; height: 100%; background-color: var(--text-main); border-radius: 4px; z-index: 1; pointer-events: none; }
         .dual-slider { position: absolute; width: 100%; top: -8px; appearance: none; -webkit-appearance: none; background: transparent; pointer-events: none; z-index: 3; margin: 0; padding: 0; }
@@ -64,6 +60,10 @@
         .dual-slider::-webkit-slider-thumb:active { transform: scale(1.15); }
         .dual-slider::-moz-range-thumb { pointer-events: auto; appearance: none; width: 22px; height: 22px; border-radius: 50%; background-color: var(--text-main); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 2px 6px rgba(0,0,0,0.4); position: relative; z-index: 5; }
 
+        /* Smooth transitions for theme changes */
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
+        .transition-colors { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .pb-safe { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 20px)); }
@@ -137,7 +137,7 @@
                     </div>
 
                     <div class="bg-premiumCard border border-premiumBorder rounded-xl p-4 transition-colors">
-                        <div class="flex justify-between items-center mb-3">
+                        <div class="flex justify-between items-center mb-1">
                             <label class="text-[10px] font-bold uppercase tracking-widest text-premiumGray">Price Range</label>
                             <span id="priceValue" class="text-sm font-black text-premiumWhite tracking-widest">$0.00 — $1000.00</span>
                         </div>
@@ -252,7 +252,7 @@
     <nav class="fixed bottom-0 w-full bg-premiumBlack/90 backdrop-blur-md border-t border-premiumBorder z-40 pb-safe transition-colors">
         <div class="flex justify-around items-center p-4 max-w-md mx-auto">
             <button onclick="app.navigate('home'); app.setCategory('home');" id="nav-home" class="flex flex-col items-center text-premiumWhite transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Shopping</span>
             </button>
             
