@@ -2,10 +2,10 @@
 // ⚙️ APP SETTINGS (CHANGE NUMBER OF ITEMS DISPLAYED HERE)
 // =========================================================================
 const STORE_CONFIG = {
-    maxNewArrivals: 4,    // Shows the 4 newest items based on 'dateAdded'
-    maxTrending: 4,       // Shows the 4 items with the most 'clicks'
-    maxBestDeals: 4,      // Shows the 4 cheapest items
-    maxBestSelling: 4,    // Shows the 4 items with the most 'sales'
+    maxNewArrivals: 4,    
+    maxTrending: 4,       
+    maxBestDeals: 4,      
+    maxBestSelling: 4,    
     
     // minPriceRange: 0,
     // maxPriceRange: 1000
@@ -14,8 +14,6 @@ const STORE_CONFIG = {
 // =========================================================================
 // 🛒 PRODUCT DATA (ADD NEW PRODUCTS & EDIT PRICES HERE)
 // =========================================================================
-// To add a new product, just copy an existing block and change the details.
-// Make sure every product has a unique 'id' number!
 
 const products = [
     { 
@@ -142,6 +140,7 @@ const app = {
     searchQuery: "",
     minPrice: 0,
     maxPrice: 1000,
+    isPriceFilterActive: false, // FIX: Determines if slider was touched
     cart: [], 
     isPanelOpen: false,
     isLeftPanelOpen: false,
@@ -152,9 +151,10 @@ const app = {
         this.tg.expand();
         this.tg.ready();
         
-        // Initialize Slider Properly (Force valid Numbers)
-        this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
-        this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
+        // Initialize Default Variables
+        this.minPrice = Number(STORE_CONFIG.minPriceRange);
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
+        this.isPriceFilterActive = false; // Do not apply filters on page load
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
@@ -174,6 +174,8 @@ const app = {
         
         this.applyTheme();
         this.updateSliderUI();
+        
+        // Load initial products (bypassing filters completely)
         this.renderCatalog();
         this.setupBackButton();
     },
@@ -184,7 +186,6 @@ const app = {
         }
     },
 
-    // --- PANELS & MENUS ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
@@ -225,7 +226,6 @@ const app = {
         }
     },
 
-    // --- CATEGORY FILTERING ---
     setCategory(category) {
         this.haptic('medium');
         this.currentCategory = category;
@@ -252,33 +252,6 @@ const app = {
         this.renderCatalog();
     },
 
-    // FIX: Functional Reset button for the Empty State Screen
-    resetFilters() {
-        this.haptic('medium');
-        this.searchQuery = "";
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = "";
-        
-        // Reset values to defaults
-        this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
-        this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
-        
-        const minInput = document.getElementById('minPriceRange');
-        const maxInput = document.getElementById('maxPriceRange');
-        if (minInput) {
-            minInput.value = this.minPrice;
-            minInput.style.zIndex = "3";
-        }
-        if (maxInput) {
-            maxInput.value = this.maxPrice;
-            maxInput.style.zIndex = "4";
-        }
-        
-        this.updateSliderUI();
-        this.setCategory('home');
-    },
-
-    // --- SHARE APP ---
     shareApp() {
         this.haptic('medium');
         const shareLink = "https://t.me/BrickStoreApp_bot/Homepage";
@@ -290,7 +263,6 @@ const app = {
         }
     },
 
-    // --- THEME ---
     toggleTheme() {
         this.haptic('medium');
         this.isDarkMode = !this.isDarkMode;
@@ -313,7 +285,6 @@ const app = {
         }
     },
 
-    // --- NAVIGATION ---
     navigate(viewId) {
         this.haptic('light');
         
@@ -355,6 +326,9 @@ const app = {
     },
 
     handlePriceFilter(type) {
+        // FIX: The user has touched the slider, enable filtering
+        this.isPriceFilterActive = true; 
+
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
         
@@ -402,7 +376,6 @@ const app = {
         }
     },
 
-    // --- CART LOGIC ---
     addToCart(id) {
         this.haptic('medium');
         const product = products.find(p => p.id === id);
@@ -457,10 +430,10 @@ const app = {
         }
     },
 
-    // --- RENDERING VIEWS ---
-    renderCatalog() {
+    // renderCatalog() {
         const grid = document.getElementById('product-grid');
         
+        // 1. Establish the base products based on the category chosen
         let displayProducts = [...products];
 
         if (this.currentCategory === 'new') {
@@ -480,40 +453,36 @@ const app = {
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestSelling);
         }
 
-        // displayProducts = displayProducts.filter(product => {
-    // 🛡️ SAFETY: Ensure product exists
-    if (!product) return false;
+        // 2. Filter Logic
+        let filteredProducts = displayProducts.filter(product => {
+            // Apply Search filter
+            const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
+            
+            // Apply Price Filter (ONLY if user touched the slider)
+            let matchesPrice = true;
+            if (this.isPriceFilterActive) {
+                const itemPrice = Number(product.price);
+                const minP = Number(this.minPrice);
+                const maxP = Number(this.maxPrice);
+                
+                // INCLUSIVE LOGIC ( >= and <= )
+                matchesPrice = itemPrice >= minP && itemPrice <= maxP;
+                
+                // Debugging to console to verify math correctness
+                console.log(`[DEBUG] Check: ${product.name} | Price: ${itemPrice} | Range: ${minP}-${maxP} | Fits Range: ${matchesPrice}`);
+            }
 
-    // 🔍 SEARCH FILTER
-    const matchesSearch = product.name
-        .toLowerCase()
-        .includes(this.searchQuery || "");
+            return matchesSearch && matchesPrice;
+        });
 
-    // 💰 PRICE FILTER (SAFE NUMBER CONVERSION)
-    const itemPrice = Number(product.price) || 0;
-    const minP = Number(this.minPrice) || 0;
-    const maxP = Number(this.maxPrice) || 1000;
-
-    const matchesPrice = itemPrice >= minP && itemPrice <= maxP;
-
-    return matchesSearch && matchesPrice;
-});
-
-        // Debug Safety Fallback UI
-        if (displayProducts.length === 0) {
-            grid.innerHTML = `
-                <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
-                    <span class="text-4xl mb-4 opacity-50 grayscale filter">🔍</span>
-                    <p class="text-premiumGray text-sm mb-5 px-4 leading-relaxed">No items matched your search or price filter.</p>
-                    <a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase tracking-widest text-xs underline underline-offset-4 active:scale-95 transition-transform hover:text-gray-300">
-                        Go back to homepage
-                    </a>
-                </div>
-            `;
-            return;
+        // 3. Fallback Mechanism
+        if (filteredProducts.length === 0) {
+            console.log("[DEBUG] No items matched the filter! Triggering fallback to display all category items.");
+            filteredProducts = displayProducts; // Restores all products for this view
         }
 
-        grid.innerHTML = displayProducts.map(product => `
+        // 4. Render to DOM
+        grid.innerHTML = filteredProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
@@ -522,7 +491,6 @@ const app = {
                     <div>
                         <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${product.name}</h4>
                     </div>
-                    
                     <div class="mt-3 flex justify-between items-center">
                         <div class="flex items-baseline gap-2">
                             <span class="text-premiumWhite font-black text-sm tracking-widest">$${Number(product.price).toFixed(2)}</span>
