@@ -149,9 +149,9 @@ const app = {
         this.tg.expand();
         this.tg.ready();
         
-        // Force default values to be strict Math Numbers
-        this.minPrice = Number(STORE_CONFIG.minPriceRange);
-        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
+        // FIX: Force default values to be strict Math Numbers just in case
+        this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
@@ -181,7 +181,6 @@ const app = {
         }
     },
 
-    // --- PANELS & MENUS ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
@@ -246,15 +245,15 @@ const app = {
         this.renderCatalog();
     },
 
-    // A fully functional reset for the "Go back to homepage" button
+    // FIX: Functional Reset button for the Error screen
     resetFilters() {
         this.haptic('medium');
         this.searchQuery = "";
         const searchInput = document.getElementById('searchInput');
         if (searchInput) searchInput.value = "";
         
-        this.minPrice = Number(STORE_CONFIG.minPriceRange);
-        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
+        this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
@@ -346,14 +345,24 @@ const app = {
         let minVal = Number(minInput.value);
         let maxVal = Number(maxInput.value);
         
-        const gap = 1;
-        if (type === 'min' && minVal > maxVal - gap) {
-            minVal = maxVal - gap;
-            minInput.value = minVal;
+        const gap = 1; // Prevent handles from crossing
+        if (type === 'min') {
+            if (minVal > maxVal - gap) {
+                minVal = maxVal - gap;
+                minInput.value = minVal;
+            }
+            // FIX: Bring active slider to front so they never get stuck
+            minInput.style.zIndex = "4";
+            maxInput.style.zIndex = "3";
         }
-        if (type === 'max' && maxVal < minVal + gap) {
-            maxVal = minVal + gap;
-            maxInput.value = maxVal;
+        if (type === 'max') {
+            if (maxVal < minVal + gap) {
+                maxVal = minVal + gap;
+                maxInput.value = maxVal;
+            }
+            // FIX: Bring active slider to front so they never get stuck
+            maxInput.style.zIndex = "4";
+            minInput.style.zIndex = "3";
         }
         
         this.minPrice = minVal;
@@ -412,13 +421,17 @@ const app = {
         
         if (productId) {
             const product = products.find(p => p.id === productId);
-            if (product) { message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]`; }
+            if (product) { 
+                const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
+                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${safePrice.toFixed(2)}\n[image]`; 
+            }
         } else if (this.cart.length > 0) {
             message = "Hello, I would like to order these products:\n\n";
             let total = 0;
             this.cart.forEach((product, index) => {
-                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]\n\n`;
-                total += product.price;
+                const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
+                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${safePrice.toFixed(2)}\n[image]\n\n`;
+                total += safePrice;
             });
             message += `Total Price: $${total.toFixed(2)}`;
         }
@@ -453,10 +466,12 @@ const app = {
         // displayProducts = displayProducts.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
             
-            // Force strict numeric comparison
-            const itemPrice = Number(product.price);
-            const minP = Number(this.minPrice);
-            const maxP = Number(this.maxPrice);
+            // FIX: Auto-Cleaner strips out any letters or symbols you might accidentally type in the price
+            const rawPrice = String(product.price).replace(/[^0-9.]/g, '');
+            const itemPrice = Number(rawPrice) || 0;
+            
+            const minP = Number(this.minPrice) || 0;
+            const maxP = Number(this.maxPrice) || 1000;
             
             // Inclusive range filter
             const matchesPrice = itemPrice >= minP && itemPrice <= maxP;
@@ -464,7 +479,7 @@ const app = {
             return matchesSearch && matchesPrice;
         });
 
-        // Debug Safety / Fallback Display
+        // FIX: Debug Safety Fallback Display
         if (displayProducts.length === 0) {
             grid.innerHTML = `
                 <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
@@ -478,7 +493,12 @@ const app = {
             return;
         }
 
-        grid.innerHTML = displayProducts.map(product => `
+        grid.innerHTML = displayProducts.map(product => {
+            // FIX: Ensure safe rendering even if prices have typos in the data array
+            const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
+            const safeOldPrice = Number(String(product.oldPrice).replace(/[^0-9.]/g, '')) || 0;
+
+            return `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
@@ -489,8 +509,8 @@ const app = {
                     </div>
                     <div class="mt-3 flex justify-between items-center">
                         <div class="flex items-baseline gap-2">
-                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${product.price.toFixed(2)}</span>
-                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${product.oldPrice.toFixed(2)}</span>
+                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${safePrice.toFixed(2)}</span>
+                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${safeOldPrice.toFixed(2)}</span>
                         </div>
                         <div class="w-6 h-6 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -498,12 +518,16 @@ const app = {
                     </div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     },
 
     viewProduct(id) {
         const product = products.find(p => p.id === id);
         if (!product) return;
+        
+        const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
+        const safeOldPrice = Number(String(product.oldPrice).replace(/[^0-9.]/g, '')) || 0;
 
         const content = document.getElementById('product-detail-content');
         content.innerHTML = `
@@ -514,8 +538,8 @@ const app = {
                 <div class="text-center">
                     <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
                     <div class="flex justify-center items-baseline gap-3 mb-2">
-                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${product.price.toFixed(2)}</span>
-                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${product.oldPrice.toFixed(2)}</span>
+                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${safePrice.toFixed(2)}</span>
+                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${safeOldPrice.toFixed(2)}</span>
                     </div>
                 </div>
             </div>
@@ -552,7 +576,9 @@ const app = {
 
         let total = 0;
         let cartItemsHTML = this.cart.map((item, index) => {
-            total += item.price;
+            const safePrice = Number(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+            total += safePrice;
+            
             return `
                 <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm">
                     <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner">
@@ -560,7 +586,7 @@ const app = {
                     </div>
                     <div class="flex-1">
                         <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
-                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${item.price.toFixed(2)}</span>
+                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${safePrice.toFixed(2)}</span>
                     </div>
                     <button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
