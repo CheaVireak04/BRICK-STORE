@@ -1,13 +1,9 @@
 // =========================================================================
-// ⚠️ MOCK-UP APP SETTINGS (DOES NOT REPLACE MASTER)
+// ⚠️ EXPERIMENTAL MOCK-UP APP SETTINGS (DOES NOT REPLACE MASTER)
 // =========================================================================
 const STORE_CONFIG = {
-    maxNewArrivals: 4,    
-    maxTrending: 4,       
-    maxBestDeals: 4,      
-    maxBestSelling: 4,    
-    minPriceLimit: 0,
-    maxPriceLimit: 1000
+    maxNewArrivals: 4, maxTrending: 4, maxBestDeals: 4, maxBestSelling: 4,
+    minPriceLimit: 0, maxPriceLimit: 1000
 };
 
 // =========================================================================
@@ -208,7 +204,9 @@ const app = {
                         <img src="${product.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
                     </div>
                     <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder bg-premiumCard">
-                        <div><h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${this.highlightText(product.name)}</h4></div>
+                        <div>
+                            <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${this.highlightText(product.name)}</h4>
+                        </div>
                         <div class="mt-3 flex justify-between items-center">
                             <div class="flex items-baseline gap-2">
                                 <span class="text-premiumWhite font-black text-sm tracking-widest">$${Number(product.price).toFixed(2)}</span>
@@ -220,7 +218,7 @@ const app = {
                     </div>
                 </div>
             `).join('');
-        }, 500); // 500ms delay ends here
+        }, 500); // 500ms Skeleton Delay
     },
 
     viewProduct(id) {
@@ -276,6 +274,7 @@ const app = {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         
+        // Simple fade-in animation
         setTimeout(() => {
             modal.classList.remove('opacity-0');
             modal.classList.add('opacity-100');
