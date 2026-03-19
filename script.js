@@ -1,13 +1,18 @@
 // =========================================================================
-// ⚠️ EXPERIMENTAL MOCK-UP APP SETTINGS (DOES NOT REPLACE MASTER)
+// ⚙️ APP SETTINGS (CHANGE NUMBERS HERE)
 // =========================================================================
 const STORE_CONFIG = {
-    maxNewArrivals: 4, maxTrending: 4, maxBestDeals: 4, maxBestSelling: 4,
-    minPriceLimit: 0, maxPriceLimit: 1000
+    maxNewArrivals: 4,    
+    maxTrending: 4,       
+    maxBestDeals: 4,      
+    maxBestSelling: 4,    
+    minPrice: 0,
+    maxPrice: 1000
 };
 
 // =========================================================================
-// [MOCK-UP FEATURE]: Multi-Image 'gallery' array added
+// 🛒 PRODUCT DATA 
+// [MOCK-UP FEATURE]: Multi-Image 'gallery' array added for testing
 // =========================================================================
 const products = [
     { 
@@ -85,22 +90,39 @@ const products = [
     }
 ];
 
+// =========================================================================
+// ⚠️ APPLICATION LOGIC
+// =========================================================================
+
 const app = {
     tg: null,
     supportUsername: "Chea_Vireak",
-    searchQuery: "", minPrice: 0, maxPrice: 1000, isPriceFilterActive: false,
-    cart: [], isPanelOpen: false, isLeftPanelOpen: false, isDarkMode: true, currentCategory: 'home',
-    
-    // Tracks the product ID if user buys straight from the product page
+    searchQuery: "", 
+    minPrice: 0, 
+    maxPrice: 1000, 
+    isPriceFilterActive: false,
+    cart: [], 
+    isPanelOpen: false, 
+    isLeftPanelOpen: false, 
+    isDarkMode: true, 
+    currentCategory: 'home',
     pendingOrderProductId: null,
 
     init() {
         try { this.tg = window.Telegram?.WebApp; this.tg?.expand?.(); this.tg?.ready?.(); } catch(e) {}
-        this.minPrice = Number(STORE_CONFIG.minPriceLimit) || 0;
-        this.maxPrice = Number(STORE_CONFIG.maxPriceLimit) || 1000;
+        
+        this.minPrice = Number(STORE_CONFIG.minPrice) || 0;
+        this.maxPrice = Number(STORE_CONFIG.maxPrice) || 1000;
         
         try { this.isDarkMode = (localStorage.getItem('brickTheme') !== 'light'); } catch(e) { this.isDarkMode = true; }
         
+        const minInput = document.getElementById('minPriceRange');
+        const maxInput = document.getElementById('maxPriceRange');
+        if(minInput && maxInput) {
+            minInput.min = this.minPrice; minInput.max = this.maxPrice; minInput.value = this.minPrice;
+            maxInput.min = this.minPrice; maxInput.max = this.maxPrice; maxInput.value = this.maxPrice;
+        }
+
         this.applyTheme();
         this.updateSliderUI();
         this.renderCatalog(); 
@@ -117,13 +139,12 @@ const app = {
 
     // [MOCK-UP FEATURE]: FLYING ICON ANIMATION
     animateAddToCart(productId, event) {
-        event.stopPropagation(); // Stop clicking from opening product page
+        event.stopPropagation(); 
         this.haptic('medium');
         
         const product = products.find(p => p.id === productId);
         if (!product) return;
 
-        // Create the flying image clone
         const flyingImg = document.createElement('img');
         flyingImg.src = product.image;
         flyingImg.className = 'flying-item';
@@ -136,7 +157,6 @@ const app = {
         flyingImg.style.left = `${startRect.left}px`;
         document.body.appendChild(flyingImg);
         
-        // Start fly animation
         setTimeout(() => {
             flyingImg.style.top = `${endRect.top + 10}px`;
             flyingImg.style.left = `${endRect.left + 10}px`;
@@ -144,13 +164,10 @@ const app = {
             flyingImg.style.opacity = '0';
         }, 20);
 
-        // Remove clone and update cart after animation finishes
         setTimeout(() => {
             flyingImg.remove();
             this.cart.push(product);
             this.updateCartBadge();
-            
-            // Pop animation on the cart icon
             cartIcon.style.transform = 'scale(1.2)';
             setTimeout(() => cartIcon.style.transform = 'scale(1)', 150);
         }, 700);
@@ -158,6 +175,7 @@ const app = {
 
     renderCatalog() {
         const grid = document.getElementById('product-grid');
+        if(!grid) return;
         
         // [MOCK-UP FEATURE]: SKELETON LOADING
         const skeletonHTML = Array(4).fill(`
@@ -169,7 +187,7 @@ const app = {
         `).join('');
         grid.innerHTML = skeletonHTML;
 
-        // Simulate 500ms network delay for premium feel
+        // Simulate network delay for premium feel
         setTimeout(() => {
             let displayProducts = [...products];
 
@@ -218,7 +236,7 @@ const app = {
                     </div>
                 </div>
             `).join('');
-        }, 500); // 500ms Skeleton Delay
+        }, 500); 
     },
 
     viewProduct(id) {
@@ -234,52 +252,52 @@ const app = {
         }
 
         const content = document.getElementById('product-detail-content');
-        content.innerHTML = `
-            <div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm">
-                <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder shadow-inner relative">
-                    ${galleryHTML}
-                    ${product.gallery && product.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest animate-pulse">Swipe image →</div>` : ''}
-                </div>
-                <div class="text-center">
-                    <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
-                    <div class="flex justify-center items-baseline gap-3 mb-2">
-                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${Number(product.price).toFixed(2)}</span>
-                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(product.oldPrice).toFixed(2)}</span>
+        if(content) {
+            content.innerHTML = `
+                <div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm">
+                    <div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder shadow-inner relative">
+                        ${galleryHTML}
+                        ${product.gallery && product.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest animate-pulse">Swipe image →</div>` : ''}
+                    </div>
+                    <div class="text-center">
+                        <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
+                        <div class="flex justify-center items-baseline gap-3 mb-2">
+                            <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${Number(product.price).toFixed(2)}</span>
+                            <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(product.oldPrice).toFixed(2)}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${product.desc}</p>
-            <div class="space-y-3">
-                <button onclick="app.addToCart(${product.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    Add to Cart
-                </button>
-                <button onclick="app.openOrderSummary(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
-                    Order via Summary Form
-                </button>
-            </div>
-        `;
+                <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${product.desc}</p>
+                <div class="space-y-3">
+                    <button onclick="app.addToCart(${product.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Add to Cart
+                    </button>
+                    <button onclick="app.openOrderSummary(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
+                        Order via Summary Form
+                    </button>
+                </div>
+            `;
+        }
         this.navigate('product');
     },
 
     // [MOCK-UP FEATURE]: ORDER SUMMARY MODAL FUNCTIONS
     openOrderSummary(productId = null) {
         this.haptic('medium');
-        this.pendingOrderProductId = productId; // If null, means it's a Cart checkout
+        this.pendingOrderProductId = productId; 
         
         const modal = document.getElementById('order-modal');
         const content = document.getElementById('order-modal-content');
+        if(!modal || !content) return;
         
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         
-        // Simple fade-in animation
         setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            modal.classList.add('opacity-100');
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
+            modal.classList.remove('opacity-0'); modal.classList.add('opacity-100');
+            content.classList.remove('scale-95'); content.classList.add('scale-100');
         }, 10);
     },
 
@@ -287,27 +305,25 @@ const app = {
         this.haptic('light');
         const modal = document.getElementById('order-modal');
         const content = document.getElementById('order-modal-content');
+        if(!modal || !content) return;
         
-        modal.classList.remove('opacity-100');
-        modal.classList.add('opacity-0');
-        content.classList.remove('scale-100');
-        content.classList.add('scale-95');
+        modal.classList.remove('opacity-100'); modal.classList.add('opacity-0');
+        content.classList.remove('scale-100'); content.classList.add('scale-95');
         
         setTimeout(() => {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
+            modal.classList.remove('flex'); modal.classList.add('hidden');
         }, 300);
     },
 
     confirmOrder() {
         this.haptic('medium');
-        const delivery = document.getElementById('modal-delivery').value;
-        const note = document.getElementById('modal-note').value;
+        const delivery = document.getElementById('modal-delivery')?.value || "Standard";
+        const note = document.getElementById('modal-note')?.value || "";
         let message = `🛒 NEW ORDER REQUEST\nDelivery: ${delivery}\nNote: ${note || 'None'}\n\n`;
         
         if (this.pendingOrderProductId) {
             const p = products.find(i => i.id === this.pendingOrderProductId);
-            message += `Item: ${p.name}\nPrice: $${Number(p.price).toFixed(2)}`;
+            if(p) message += `Item: ${p.name}\nPrice: $${Number(p.price).toFixed(2)}`;
         } else {
             let total = 0;
             this.cart.forEach((p, i) => {
@@ -324,13 +340,14 @@ const app = {
         this.closeOrderSummary();
     },
 
-    // --- STANDARD MASTER CODE FUNCTIONS ---
+    // --- CORE LOGIC ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
         this.isPanelOpen = !this.isPanelOpen;
         const panel = document.getElementById('side-panel');
         const overlay = document.getElementById('panel-overlay');
+        if(!panel || !overlay) return;
         
         if (this.isPanelOpen) {
             panel.classList.remove('translate-x-full'); panel.classList.add('translate-x-0');
@@ -347,6 +364,7 @@ const app = {
         this.isLeftPanelOpen = !this.isLeftPanelOpen;
         const panel = document.getElementById('left-panel');
         const overlay = document.getElementById('left-panel-overlay');
+        if(!panel || !overlay) return;
         
         if (this.isLeftPanelOpen) {
             panel.classList.remove('-translate-x-full'); panel.classList.add('translate-x-0');
@@ -365,9 +383,12 @@ const app = {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         setTimeout(() => { const target = document.getElementById(`view-${viewId}`); if(target) target.classList.add('active'); }, 50);
 
+        const navHome = document.getElementById('nav-home');
+        const navCart = document.getElementById('nav-cart');
+        
         if (viewId === 'home' || viewId === 'cart') {
-            document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
-            document.getElementById('nav-cart').className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
+            if(navHome) navHome.className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
+            if(navCart) navCart.className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             try { this.tg?.BackButton?.hide?.(); } catch(e){}
         } else { try { this.tg?.BackButton?.show?.(); } catch(e){} }
 
@@ -377,9 +398,14 @@ const app = {
 
     handlePriceFilter(type) {
         this.isPriceFilterActive = true;
-        const minInput = document.getElementById('minPriceRange'); const maxInput = document.getElementById('maxPriceRange');
-        let minVal = Number(minInput.value); let maxVal = Number(maxInput.value);
+        const minInput = document.getElementById('minPriceRange'); 
+        const maxInput = document.getElementById('maxPriceRange');
+        if(!minInput || !maxInput) return;
+        
+        let minVal = Number(minInput.value); 
+        let maxVal = Number(maxInput.value);
         const gap = 1; 
+        
         if (type === 'min') {
             if (minVal > maxVal - gap) { minVal = maxVal - gap; minInput.value = minVal; }
             minInput.style.zIndex = "4"; maxInput.style.zIndex = "3";
@@ -388,23 +414,29 @@ const app = {
             if (maxVal < minVal + gap) { maxVal = minVal + gap; maxInput.value = maxVal; }
             maxInput.style.zIndex = "4"; minInput.style.zIndex = "3";
         }
-        this.minPrice = minVal; this.maxPrice = maxVal;
-        this.updateSliderUI(); this.renderCatalog();
+        
+        this.minPrice = minVal; 
+        this.maxPrice = maxVal;
+        this.updateSliderUI(); 
+        this.renderCatalog();
     },
 
     updateSliderUI() {
         const label = document.getElementById('priceValue');
         if(label) label.innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`;
+        
         const track = document.getElementById('slider-track');
-        const rangeTotal = STORE_CONFIG.maxPriceLimit - STORE_CONFIG.minPriceLimit;
-        if(track) {
-            track.style.left = (((this.minPrice - STORE_CONFIG.minPriceLimit) / rangeTotal) * 100) + '%';
-            track.style.right = (100 - (((this.maxPrice - STORE_CONFIG.minPriceLimit) / rangeTotal) * 100)) + '%';
+        const rangeTotal = STORE_CONFIG.maxPrice - STORE_CONFIG.minPrice;
+        if(track && rangeTotal > 0) {
+            track.style.left = (((this.minPrice - STORE_CONFIG.minPrice) / rangeTotal) * 100) + '%';
+            track.style.right = (100 - (((this.maxPrice - STORE_CONFIG.minPrice) / rangeTotal) * 100)) + '%';
         }
     },
 
     renderCart() {
         const content = document.getElementById('cart-content');
+        if(!content) return;
+        
         if (this.cart.length === 0) {
             content.innerHTML = `
                 <div class="text-center py-20">
@@ -454,9 +486,9 @@ const app = {
         if (product) { this.cart.push(product); this.updateCartBadge(); }
     },
     removeFromCart(index) { this.haptic('light'); this.cart.splice(index, 1); this.updateCartBadge(); this.renderCart(); },
-    updateCartBadge() { const b = document.getElementById('cart-badge'); b.innerText = this.cart.length; b.classList.toggle('hidden', this.cart.length === 0); },
-    setCategory(cat) { this.haptic('medium'); this.currentCategory = cat; this.searchQuery = ""; document.getElementById('searchInput').value = ""; if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.navigate('home'); this.renderCatalog(); },
-    resetFilters() { this.haptic('medium'); this.searchQuery = ""; const s = document.getElementById('searchInput'); if (s) s.value = ""; this.minPrice = Number(STORE_CONFIG.minPriceLimit); this.maxPrice = Number(STORE_CONFIG.maxPriceLimit); this.isPriceFilterActive = false; const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange'); if (mi) mi.value = this.minPrice; if (ma) ma.value = this.maxPrice; this.updateSliderUI(); this.setCategory('home'); },
+    updateCartBadge() { const b = document.getElementById('cart-badge'); if(b) { b.innerText = this.cart.length; b.classList.toggle('hidden', this.cart.length === 0); } },
+    setCategory(cat) { this.haptic('medium'); this.currentCategory = cat; this.searchQuery = ""; const si = document.getElementById('searchInput'); if(si) si.value = ""; if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.navigate('home'); this.renderCatalog(); },
+    resetFilters() { this.haptic('medium'); this.searchQuery = ""; const s = document.getElementById('searchInput'); if (s) s.value = ""; this.minPrice = Number(STORE_CONFIG.minPrice); this.maxPrice = Number(STORE_CONFIG.maxPrice); this.isPriceFilterActive = false; const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange'); if (mi) mi.value = this.minPrice; if (ma) ma.value = this.maxPrice; this.updateSliderUI(); this.setCategory('home'); },
     applyTheme() { const k = document.getElementById('theme-toggle-knob'); if (this.isDarkMode) { document.body.classList.add('dark'); if(k) { k.classList.add('translate-x-6'); k.classList.remove('translate-x-0'); } try { this.tg?.setHeaderColor?.('#000000'); this.tg?.setBackgroundColor?.('#000000'); } catch(e){} } else { document.body.classList.remove('dark'); if(k) { k.classList.remove('translate-x-6'); k.classList.add('translate-x-0'); } try { this.tg?.setHeaderColor?.('#f4f4f5'); this.tg?.setBackgroundColor?.('#f4f4f5'); } catch(e){} } },
     toggleTheme() { this.haptic('medium'); this.isDarkMode = !this.isDarkMode; try { localStorage.setItem('brickTheme', this.isDarkMode ? 'dark' : 'light'); } catch(e) {} this.applyTheme(); },
     shareApp() { this.haptic('medium'); const l = "https://t.me/BrickStoreApp_bot/Homepage"; const t = "Check out BRICK STORE for premium CS2 desk toys!"; try { if (this.tg?.openTelegramLink) this.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(l)}&text=${encodeURIComponent(t)}`); else alert(`Share this link: ${l}`); } catch(e) { window.open(`https://t.me/share/url?url=${encodeURIComponent(l)}&text=${encodeURIComponent(t)}`, '_blank'); } }
