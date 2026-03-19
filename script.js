@@ -2,10 +2,10 @@
 // ⚙️ APP SETTINGS (CHANGE NUMBER OF ITEMS DISPLAYED HERE)
 // =========================================================================
 const STORE_CONFIG = {
-    maxNewArrivals: 4,    
-    maxTrending: 4,       
-    maxBestDeals: 4,      
-    maxBestSelling: 4,    
+    maxNewArrivals: 4,    // Shows the 4 newest items based on 'dateAdded'
+    maxTrending: 4,       // Shows the 4 items with the most 'clicks'
+    maxBestDeals: 4,      // Shows the 4 cheapest items
+    maxBestSelling: 4,    // Shows the 4 items with the most 'sales'
     
     // minPriceRange: 0,
     // maxPriceRange: 1000
@@ -14,12 +14,14 @@ const STORE_CONFIG = {
 // =========================================================================
 // 🛒 PRODUCT DATA (ADD NEW PRODUCTS & EDIT PRICES HERE)
 // =========================================================================
+// To add a new product, just copy an existing block and change the details.
+// Make sure every product has a unique 'id' number!
 
 const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        // price: 12, 
+        price: 12, 
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand.",
@@ -136,6 +138,7 @@ const app = {
     tg: window.Telegram.WebApp,
     supportUsername: "Chea_Vireak",
     
+    // State Data
     searchQuery: "",
     minPrice: 0,
     maxPrice: 1000,
@@ -149,7 +152,7 @@ const app = {
         this.tg.expand();
         this.tg.ready();
         
-        // FIX: Force default values to be strict Math Numbers just in case
+        // Initialize Slider Properly (Force valid Numbers)
         this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
         this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
         
@@ -181,6 +184,7 @@ const app = {
         }
     },
 
+    // --- PANELS & MENUS ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
@@ -221,9 +225,12 @@ const app = {
         }
     },
 
+    // --- CATEGORY FILTERING ---
     setCategory(category) {
         this.haptic('medium');
         this.currentCategory = category;
+        this.searchQuery = ""; 
+        document.getElementById('searchInput').value = "";
         
         if(this.isLeftPanelOpen) this.toggleLeftPanel();
         
@@ -245,25 +252,33 @@ const app = {
         this.renderCatalog();
     },
 
-    // FIX: Functional Reset button for the Error screen
+    // FIX: Functional Reset button for the Empty State Screen
     resetFilters() {
         this.haptic('medium');
         this.searchQuery = "";
         const searchInput = document.getElementById('searchInput');
         if (searchInput) searchInput.value = "";
         
+        // Reset values to defaults
         this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
         this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
-        if (minInput) minInput.value = this.minPrice;
-        if (maxInput) maxInput.value = this.maxPrice;
+        if (minInput) {
+            minInput.value = this.minPrice;
+            minInput.style.zIndex = "3";
+        }
+        if (maxInput) {
+            maxInput.value = this.maxPrice;
+            maxInput.style.zIndex = "4";
+        }
         
         this.updateSliderUI();
         this.setCategory('home');
     },
 
+    // --- SHARE APP ---
     shareApp() {
         this.haptic('medium');
         const shareLink = "https://t.me/BrickStoreApp_bot/Homepage";
@@ -275,6 +290,7 @@ const app = {
         }
     },
 
+    // --- THEME ---
     toggleTheme() {
         this.haptic('medium');
         this.isDarkMode = !this.isDarkMode;
@@ -297,6 +313,7 @@ const app = {
         }
     },
 
+    // --- NAVIGATION ---
     navigate(viewId) {
         this.haptic('light');
         
@@ -311,7 +328,7 @@ const app = {
 
         setTimeout(() => {
             const target = document.getElementById(`view-${viewId}`);
-            target.classList.add('active');
+            if(target) target.classList.add('active');
         }, 50);
 
         if (viewId === 'home' || viewId === 'cart') {
@@ -341,17 +358,15 @@ const app = {
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
         
-        // Force reading slider values as strict numbers
         let minVal = Number(minInput.value);
         let maxVal = Number(maxInput.value);
         
-        const gap = 1; // Prevent handles from crossing
+        const gap = 1; 
         if (type === 'min') {
             if (minVal > maxVal - gap) {
                 minVal = maxVal - gap;
                 minInput.value = minVal;
             }
-            // FIX: Bring active slider to front so they never get stuck
             minInput.style.zIndex = "4";
             maxInput.style.zIndex = "3";
         }
@@ -360,7 +375,6 @@ const app = {
                 maxVal = minVal + gap;
                 maxInput.value = maxVal;
             }
-            // FIX: Bring active slider to front so they never get stuck
             maxInput.style.zIndex = "4";
             minInput.style.zIndex = "3";
         }
@@ -373,7 +387,9 @@ const app = {
     },
 
     updateSliderUI() {
-        document.getElementById('priceValue').innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`;
+        const label = document.getElementById('priceValue');
+        if(label) label.innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`;
+        
         const track = document.getElementById('slider-track');
         const rangeTotal = STORE_CONFIG.maxPriceRange - STORE_CONFIG.minPriceRange;
         
@@ -386,6 +402,7 @@ const app = {
         }
     },
 
+    // --- CART LOGIC ---
     addToCart(id) {
         this.haptic('medium');
         const product = products.find(p => p.id === id);
@@ -422,16 +439,14 @@ const app = {
         if (productId) {
             const product = products.find(p => p.id === productId);
             if (product) { 
-                const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
-                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${safePrice.toFixed(2)}\n[image]`; 
+                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${Number(product.price).toFixed(2)}\n[image]`; 
             }
         } else if (this.cart.length > 0) {
             message = "Hello, I would like to order these products:\n\n";
             let total = 0;
             this.cart.forEach((product, index) => {
-                const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
-                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${safePrice.toFixed(2)}\n[image]\n\n`;
-                total += safePrice;
+                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${Number(product.price).toFixed(2)}\n[image]\n\n`;
+                total += Number(product.price);
             });
             message += `Total Price: $${total.toFixed(2)}`;
         }
@@ -442,8 +457,10 @@ const app = {
         }
     },
 
+    // --- RENDERING VIEWS ---
     renderCatalog() {
         const grid = document.getElementById('product-grid');
+        
         let displayProducts = [...products];
 
         if (this.currentCategory === 'new') {
@@ -455,7 +472,7 @@ const app = {
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxTrending);
         }
         else if (this.currentCategory === 'deal') {
-            displayProducts.sort((a, b) => a.price - b.price);
+            displayProducts.sort((a, b) => Number(a.price) - Number(b.price));
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestDeals);
         }
         else if (this.currentCategory === 'selling') {
@@ -466,24 +483,21 @@ const app = {
         // displayProducts = displayProducts.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
             
-            // FIX: Auto-Cleaner strips out any letters or symbols you might accidentally type in the price
-            const rawPrice = String(product.price).replace(/[^0-9.]/g, '');
-            const itemPrice = Number(rawPrice) || 0;
+            // Ensure safe numeric comparison
+            const itemPrice = Number(product.price);
+            const minP = Number(this.minPrice);
+            const maxP = Number(this.maxPrice);
             
-            const minP = Number(this.minPrice) || 0;
-            const maxP = Number(this.maxPrice) || 1000;
-            
-            // Inclusive range filter
             const matchesPrice = itemPrice >= minP && itemPrice <= maxP;
             
             return matchesSearch && matchesPrice;
         });
 
-        // FIX: Debug Safety Fallback Display
+        // Debug Safety Fallback UI
         if (displayProducts.length === 0) {
             grid.innerHTML = `
                 <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
-                    <span class="text-4xl mb-4 opacity-50 grayscale">🔍</span>
+                    <span class="text-4xl mb-4 opacity-50 grayscale filter">🔍</span>
                     <p class="text-premiumGray text-sm mb-5 px-4 leading-relaxed">No items matched your search or price filter.</p>
                     <a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase tracking-widest text-xs underline underline-offset-4 active:scale-95 transition-transform hover:text-gray-300">
                         Go back to homepage
@@ -493,12 +507,7 @@ const app = {
             return;
         }
 
-        grid.innerHTML = displayProducts.map(product => {
-            // FIX: Ensure safe rendering even if prices have typos in the data array
-            const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
-            const safeOldPrice = Number(String(product.oldPrice).replace(/[^0-9.]/g, '')) || 0;
-
-            return `
+        grid.innerHTML = displayProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
@@ -507,10 +516,11 @@ const app = {
                     <div>
                         <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${product.name}</h4>
                     </div>
+                    
                     <div class="mt-3 flex justify-between items-center">
                         <div class="flex items-baseline gap-2">
-                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${safePrice.toFixed(2)}</span>
-                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${safeOldPrice.toFixed(2)}</span>
+                            <span class="text-premiumWhite font-black text-sm tracking-widest">$${Number(product.price).toFixed(2)}</span>
+                            <span class="text-premiumGray font-light text-[10px] line-through decoration-red-500/70">$${Number(product.oldPrice).toFixed(2)}</span>
                         </div>
                         <div class="w-6 h-6 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -518,16 +528,12 @@ const app = {
                     </div>
                 </div>
             </div>
-            `;
-        }).join('');
+        `).join('');
     },
 
     viewProduct(id) {
         const product = products.find(p => p.id === id);
         if (!product) return;
-        
-        const safePrice = Number(String(product.price).replace(/[^0-9.]/g, '')) || 0;
-        const safeOldPrice = Number(String(product.oldPrice).replace(/[^0-9.]/g, '')) || 0;
 
         const content = document.getElementById('product-detail-content');
         content.innerHTML = `
@@ -538,8 +544,8 @@ const app = {
                 <div class="text-center">
                     <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
                     <div class="flex justify-center items-baseline gap-3 mb-2">
-                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${safePrice.toFixed(2)}</span>
-                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${safeOldPrice.toFixed(2)}</span>
+                        <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${Number(product.price).toFixed(2)}</span>
+                        <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(product.oldPrice).toFixed(2)}</span>
                     </div>
                 </div>
             </div>
@@ -576,9 +582,7 @@ const app = {
 
         let total = 0;
         let cartItemsHTML = this.cart.map((item, index) => {
-            const safePrice = Number(String(item.price).replace(/[^0-9.]/g, '')) || 0;
-            total += safePrice;
-            
+            total += Number(item.price);
             return `
                 <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm">
                     <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner">
@@ -586,7 +590,7 @@ const app = {
                     </div>
                     <div class="flex-1">
                         <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
-                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${safePrice.toFixed(2)}</span>
+                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${Number(item.price).toFixed(2)}</span>
                     </div>
                     <button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
