@@ -1,5 +1,5 @@
 // =========================================================================
-// ⚙️ APP SETTINGS (CHANGE NUMBERS HERE)
+// ⚙️ APP SETTINGS (PREVIEW V3)
 // =========================================================================
 const STORE_CONFIG = {
     maxNewArrivals: 4,    
@@ -11,8 +11,7 @@ const STORE_CONFIG = {
 };
 
 // =========================================================================
-// 🛒 PRODUCT DATA 
-// [MOCK-UP FEATURE]: Multi-Image 'gallery' array added for testing
+// 🛒 PRODUCT DATA (With Gallery feature)
 // =========================================================================
 const products = [
     { 
@@ -22,7 +21,7 @@ const products = [
             "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png",
             "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png" 
         ],
-        desc: "Premium replica desk toy. Deep sapphire phases. [EXPERIMENTAL PREVIEW SHOWING MULTI-IMAGE CAROUSEL]",
+        desc: "Premium replica desk toy. Deep sapphire phases.",
         dateAdded: "2026-03-01", clicks: 450, sales: 85
     },
     { 
@@ -130,14 +129,52 @@ const app = {
 
     haptic(style = 'light') { try { this.tg?.HapticFeedback?.impactOccurred?.(style); } catch (e) {} },
 
-    // [MOCK-UP FEATURE]: TEXT HIGHLIGHTING LOGIC
+    // FIX: HIGHLIGHT TEXT IN SEARCH
     highlightText(text) {
         if (!this.searchQuery) return text;
         const regex = new RegExp(`(${this.searchQuery})`, 'gi');
         return text.replace(regex, '<span class="search-highlight">$1</span>');
     },
 
-    // [MOCK-UP FEATURE]: FLYING ICON ANIMATION
+    // FIX: ADVANCED SEARCH AUTO-SUGGESTION
+    handleSearch(event) {
+        this.searchQuery = event.target.value.toLowerCase().trim();
+        const suggestionsBox = document.getElementById('search-suggestions');
+
+        if (this.searchQuery.length > 0) {
+            // Find up to 5 matching products
+            const matches = products.filter(p => p.name.toLowerCase().includes(this.searchQuery)).slice(0, 5);
+
+            if (matches.length > 0) {
+                suggestionsBox.innerHTML = matches.map(p => `
+                    <div onclick="app.selectSuggestion(${p.id})" class="p-3 hover:bg-premiumBlack cursor-pointer border-b border-premiumBorder last:border-0 flex items-center gap-3 transition-colors">
+                        <img src="${p.image}" class="w-8 h-8 object-contain rounded bg-[#0a0a0a] p-1">
+                        <span class="text-xs font-bold text-premiumWhite tracking-wide">${this.highlightText(p.name)}</span>
+                    </div>
+                `).join('');
+                suggestionsBox.classList.remove('hidden');
+                suggestionsBox.classList.add('flex');
+            } else {
+                suggestionsBox.classList.add('hidden');
+                suggestionsBox.classList.remove('flex');
+            }
+        } else {
+            suggestionsBox.classList.add('hidden');
+            suggestionsBox.classList.remove('flex');
+        }
+        
+        this.renderCatalog(); // Also filter the grid in real-time
+    },
+
+    selectSuggestion(id) {
+        this.haptic('light');
+        document.getElementById('search-suggestions').classList.add('hidden');
+        document.getElementById('searchInput').value = "";
+        this.searchQuery = "";
+        this.viewProduct(id); // Take user directly to the selected product
+    },
+
+    // FLYING ICON ANIMATION
     animateAddToCart(productId, event) {
         event.stopPropagation(); 
         this.haptic('medium');
@@ -177,7 +214,7 @@ const app = {
         const grid = document.getElementById('product-grid');
         if(!grid) return;
         
-        // [MOCK-UP FEATURE]: SKELETON LOADING
+        // SKELETON LOADING
         const skeletonHTML = Array(4).fill(`
             <div class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden shadow-sm p-3">
                 <div class="w-full aspect-square skeleton rounded-lg mb-3"></div>
@@ -187,7 +224,7 @@ const app = {
         `).join('');
         grid.innerHTML = skeletonHTML;
 
-        // Simulate network delay for premium feel
+        // Simulated delay for premium feel
         setTimeout(() => {
             let displayProducts = [...products];
 
@@ -196,6 +233,7 @@ const app = {
             else if (this.currentCategory === 'deal') { displayProducts.sort((a, b) => Number(a.price) - Number(b.price)); displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestDeals); }
             else if (this.currentCategory === 'selling') { displayProducts.sort((a, b) => b.sales - a.sales); displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestSelling); }
 
+            // Apply search & price filters
             displayProducts = displayProducts.filter(product => {
                 const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
                 let matchesPrice = true;
@@ -229,7 +267,7 @@ const app = {
                             <div class="flex items-baseline gap-2">
                                 <span class="text-premiumWhite font-black text-sm tracking-widest">$${Number(product.price).toFixed(2)}</span>
                             </div>
-                            <button onclick="app.animateAddToCart(${product.id}, event)" class="w-7 h-7 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack hover:bg-premiumWhite hover:text-premiumBlack transition-colors">
+                            <button onclick="app.animateAddToCart(${product.id}, event)" class="w-7 h-7 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack hover:bg-premiumWhite hover:text-premiumBlack transition-colors shadow-md">
                                 <svg class="w-3 h-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                             </button>
                         </div>
@@ -243,7 +281,6 @@ const app = {
         const product = products.find(p => p.id === id);
         if (!product) return;
 
-        // [MOCK-UP FEATURE]: IMAGE CAROUSEL
         let galleryHTML = `<img src="${product.image}" class="w-full h-full object-contain p-4 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`;
         if (product.gallery && product.gallery.length > 1) {
             galleryHTML = `<div class="flex overflow-x-auto snap-x snap-mandatory hide-scroll h-full w-full">` + 
@@ -275,7 +312,7 @@ const app = {
                     </button>
                     <button onclick="app.openOrderSummary(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
-                        Order via Summary Form
+                        BUY NOW
                     </button>
                 </div>
             `;
@@ -283,10 +320,20 @@ const app = {
         this.navigate('product');
     },
 
-    // [MOCK-UP FEATURE]: ORDER SUMMARY MODAL FUNCTIONS
+    // CONDITIONAL DELIVERY MODAL LOGIC
     openOrderSummary(productId = null) {
         this.haptic('medium');
         this.pendingOrderProductId = productId; 
+        
+        // Reset modal fields
+        const dError = document.getElementById('delivery-error');
+        const pError = document.getElementById('phone-error');
+        const dSelect = document.getElementById('modal-delivery');
+        const cFields = document.getElementById('conditional-fields');
+        if(dError) dError.classList.add('hidden');
+        if(pError) pError.classList.add('hidden');
+        if(dSelect) dSelect.value = "";
+        if(cFields) cFields.classList.add('hidden');
         
         const modal = document.getElementById('order-modal');
         const content = document.getElementById('order-modal-content');
@@ -315,11 +362,65 @@ const app = {
         }, 300);
     },
 
+    handleDeliveryChange() {
+        const delivery = document.getElementById('modal-delivery').value;
+        const conditionalFields = document.getElementById('conditional-fields');
+        const deliveryError = document.getElementById('delivery-error');
+        
+        if (delivery !== "") deliveryError.classList.add('hidden');
+        
+        // Show conditional fields only if "Standard" is chosen
+        if (delivery.includes('Standard')) {
+            conditionalFields.classList.remove('hidden');
+        } else {
+            conditionalFields.classList.add('hidden');
+        }
+    },
+
+    clearPhoneError() {
+        document.getElementById('phone-error').classList.add('hidden');
+    },
+
     confirmOrder() {
         this.haptic('medium');
-        const delivery = document.getElementById('modal-delivery')?.value || "Standard";
-        const note = document.getElementById('modal-note')?.value || "";
-        let message = `🛒 NEW ORDER REQUEST\nDelivery: ${delivery}\nNote: ${note || 'None'}\n\n`;
+        
+        // Validation Layer
+        let isValid = true;
+        const delivery = document.getElementById('modal-delivery').value;
+        const deliveryError = document.getElementById('delivery-error');
+        
+        if (!delivery) {
+            deliveryError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            deliveryError.classList.add('hidden');
+        }
+
+        const isStandard = delivery.includes('Standard');
+        const phone = document.getElementById('modal-phone').value.trim();
+        const phoneError = document.getElementById('phone-error');
+        
+        if (isStandard && !phone) {
+            phoneError.classList.remove('hidden');
+            isValid = false;
+        } else if (isStandard) {
+            phoneError.classList.add('hidden');
+        }
+
+        if (!isValid) return; // Stop processing if validation fails
+
+        // Build the order message
+        const province = document.getElementById('modal-province').value;
+        const address = document.getElementById('modal-address').value;
+        const note = document.getElementById('modal-note').value;
+        
+        let message = `🛒 NEW ORDER REQUEST\nDelivery: ${delivery}\n`;
+        if (isStandard) {
+            message += `Location: ${province}\n`;
+            message += `Address: ${address || 'N/A'}\n`;
+            message += `Phone: ${phone}\n`;
+        }
+        message += `Note: ${note || 'None'}\n\n`;
         
         if (this.pendingOrderProductId) {
             const p = products.find(i => i.id === this.pendingOrderProductId);
@@ -340,7 +441,7 @@ const app = {
         this.closeOrderSummary();
     },
 
-    // --- CORE LOGIC ---
+    // --- UTILITIES AND PANEL CONTROLS ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
@@ -475,7 +576,7 @@ const app = {
                 </div>
                 <button onclick="app.openOrderSummary()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
-                    Order via Summary Form
+                    BUY NOW
                 </button>
             </div>`;
     },
