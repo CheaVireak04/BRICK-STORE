@@ -3,31 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRICK STORE | FINAL V5.2</title>
+    <title>BRICK STORE | STABLE V6</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY" async defer></script>
 
     <style>
+        /* CORE VARIABLES */
         :root { --bg-main: #f4f4f5; --bg-sec: #ffffff; --bg-card: #e5e5e5; --border: #d4d4d8; --text-main: #000000; --text-sec: #52525b; }
         body.dark { --bg-main: #000000; --bg-sec: #0a0a0a; --bg-card: #111111; --border: #262626; --text-main: #ffffff; --text-sec: #a3a3a3; }
         
+        /* ANIMATIONS */
         .skeleton { background: linear-gradient(90deg, var(--bg-card) 25%, var(--border) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-
         .flying-item { position: fixed; z-index: 9999; pointer-events: none; width: 60px; height: 60px; object-fit: contain; transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
         
+        /* UI ELEMENTS */
         .search-highlight { color: #3b82f6; font-weight: 900; }
-
         .company-box { border: 2px solid var(--border); transition: all 0.2s ease; filter: grayscale(100%); opacity: 0.6; }
         .company-box.selected { border-color: #3b82f6; filter: grayscale(0%); opacity: 1; background-color: rgba(59, 130, 246, 0.1); }
 
+        /* VIEW NAVIGATION */
         .view-section { position: absolute; width: 100%; top: 0; left: 0; opacity: 0; visibility: hidden; transform: translateY(15px) scale(0.98); transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s; height: 0; overflow: hidden; }
-        .view-section.active { position: relative; opacity: 1; visibility: visible; transform: translateY(0) scale(1); height: auto; overflow: visible; }
+        .view-section.active { position: relative; opacity: 1; visibility: visible; transform: translateY(0) scale(1); height: auto; overflow: visible; min-height: 80vh; }
 
+        /* CUSTOM SLIDER */
         .dual-slider-container { position: relative; width: 100%; height: 4px; background-color: var(--border); border-radius: 4px; margin-top: 18px; margin-bottom: 12px; }
         .dual-slider-track { position: absolute; height: 100%; background-color: var(--text-main); border-radius: 4px; z-index: 1; pointer-events: none; }
         .dual-slider { position: absolute; width: 100%; top: -8px; appearance: none; -webkit-appearance: none; background: transparent; pointer-events: none; z-index: 3; margin: 0; padding: 0; }
@@ -35,20 +40,20 @@
         .dual-slider::-webkit-slider-thumb { pointer-events: auto; appearance: none; -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background-color: var(--text-main); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 2px 6px rgba(0,0,0,0.4); position: relative; z-index: 5; transition: transform 0.1s; }
         .dual-slider::-moz-range-thumb { pointer-events: auto; appearance: none; width: 22px; height: 22px; border-radius: 50%; background-color: var(--text-main); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 2px 6px rgba(0,0,0,0.4); position: relative; z-index: 5; }
 
+        /* UTILITIES */
         body { transition: background-color 0.3s ease, color 0.3s ease; }
         .transition-colors { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .pb-safe { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 20px)); }
         
+        /* PREVENTS DROPDOWN TEXT WRAPPING */
         select, select option { white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
     </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: { extend: { colors: { premiumBlack: 'var(--bg-main)', premiumDark: 'var(--bg-sec)', premiumCard: 'var(--bg-card)', premiumBorder: 'var(--border)', premiumWhite: 'var(--text-main)', premiumGray: 'var(--text-sec)' }, fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] } } }
-        }
+        tailwind.config = { theme: { extend: { colors: { premiumBlack: 'var(--bg-main)', premiumDark: 'var(--bg-sec)', premiumCard: 'var(--bg-card)', premiumBorder: 'var(--border)', premiumWhite: 'var(--text-main)', premiumGray: 'var(--text-sec)' }, fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] } } } }
     </script>
 </head>
 
@@ -75,6 +80,7 @@
                     <img src="./hero-banner.jpg" alt="CS2 Premium Knives" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/20"></div>
                     <div class="relative z-10 text-center px-4">
+                        <span class="bg-blue-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block shadow-md">STABLE V6</span>
                         <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">CS2 DESK TOYS</h2>
                         <p class="text-[10px] text-white font-bold uppercase tracking-widest leading-relaxed mt-2 drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Limited-style CS2 knife replicas crafted for collectors.</p>
                     </div>
@@ -140,7 +146,23 @@
                 </div>
 
                 <div id="grab-fields" class="hidden space-y-4 p-4 bg-premiumBlack rounded-xl border border-premiumBorder">
-                    <div>
+                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Pin Your Location <span class="text-red-500">*</span></label>
+                    
+                    <button onclick="app.getGrabLocation()" id="btn-get-location" class="w-full bg-premiumCard border border-premiumBorder hover:bg-premiumBorder text-premiumWhite text-sm font-bold p-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Get Current Location
+                    </button>
+                    
+                    <div id="map-container" class="w-full h-48 rounded-xl overflow-hidden hidden relative border border-premiumBorder bg-premiumCard">
+                        <div id="google-map" class="w-full h-full flex items-center justify-center text-premiumGray text-xs text-center p-4">Loading Map...</div>
+                    </div>
+                    
+                    <p id="map-coords" class="text-[10px] text-blue-400 hidden text-center font-mono"></p>
+                    <p id="map-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please pin your location</p>
+                    
+                    <button id="btn-confirm-location" onclick="app.confirmGrabLocation()" class="w-full bg-blue-600 text-white font-bold text-xs py-3 rounded-xl hidden transition-colors">Confirm Marker Location</button>
+
+                    <div class="mt-4 border-t border-premiumBorder pt-4">
                         <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Phone Number <span class="text-red-500">*</span></label>
                         <input type="tel" id="grab-phone" placeholder="012 345 678" oninput="app.clearGrabPhoneError()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none placeholder-premiumGray">
                         <p id="grab-phone-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Phone number is required</p>
@@ -206,7 +228,7 @@
                 </div>
 
                 <div>
-                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Note to Seller (Optional)</label>
+                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Note to Seller</label>
                     <textarea id="modal-note" placeholder="Any special requests?" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl h-20 resize-none outline-none placeholder-premiumGray"></textarea>
                 </div>
             </div>
@@ -266,6 +288,10 @@
                     <a href="https://www.instagram.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                         brick.theofficial
                     </a>
+                    <a href="https://www.tiktok.com/@brick.theofficial" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors">
+                        <svg class="w-5 h-5 text-premiumWhite" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.27 6.32 6.32 6.32 0 006.16-5.33v-7.2a8.3 8.3 0 005.18 1.84V7.85a4.96 4.96 0 01-3.02-1.16z"/></svg>
+                        brick.theofficial
+                    </a>
                 </div>
             </div>
         </div>
@@ -304,7 +330,7 @@
         const app = {
             tg: null, supportUsername: "Chea_Vireak", searchQuery: "", minPrice: 0, maxPrice: 1000, isPriceFilterActive: false,
             cart: [], isPanelOpen: false, isLeftPanelOpen: false, isDarkMode: true, currentCategory: 'home', pendingOrderProductId: null,
-            selectedCompany: null,
+            selectedCompany: null, mapLat: null, mapLng: null, isLocationConfirmed: false, googleMap: null, mapMarker: null,
 
             init() {
                 try { this.tg = window.Telegram?.WebApp; this.tg?.expand?.(); this.tg?.ready?.(); } catch(e) {}
@@ -365,21 +391,23 @@
                 let gHTML = `<img src="${p.image}" class="w-full h-full object-contain p-4 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`;
                 if (p.gallery && p.gallery.length > 1) gHTML = `<div class="flex overflow-x-auto snap-x snap-mandatory hide-scroll h-full w-full">` + p.gallery.map(img => `<img src="${img}" class="w-full h-full object-contain p-4 snap-center shrink-0 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`).join('') + `</div>`;
                 const c = document.getElementById('product-detail-content');
-                if(c) c.innerHTML = `<div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm"><div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder relative">${gHTML}${p.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest">Swipe image →</div>` : ''}</div><div class="text-center"><h2 class="text-2xl font-black uppercase tracking-widest mb-2 text-premiumWhite">${p.name}</h2><div class="flex justify-center items-baseline gap-3 mb-2"><span class="text-2xl font-black text-premiumWhite tracking-widest">$${Number(p.price).toFixed(2)}</span><span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(p.oldPrice).toFixed(2)}</span></div></div></div><p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${p.desc}</p><div class="space-y-3"><button onclick="app.addToCart(${p.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Add to Cart</button><button onclick="app.openOrderSummary(${p.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
+                if(c) c.innerHTML = `<div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm"><div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder relative">${gHTML}${p.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest animate-pulse">Swipe image →</div>` : ''}</div><div class="text-center"><h2 class="text-2xl font-black uppercase tracking-widest mb-2 text-premiumWhite">${p.name}</h2><div class="flex justify-center items-baseline gap-3 mb-2"><span class="text-2xl font-black text-premiumWhite tracking-widest">$${Number(p.price).toFixed(2)}</span><span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(p.oldPrice).toFixed(2)}</span></div></div></div><p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${p.desc}</p><div class="space-y-3"><button onclick="app.addToCart(${p.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Add to Cart</button><button onclick="app.openOrderSummary(${p.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
                 this.navigate('product');
             },
 
             openOrderSummary(productId = null) {
-                this.haptic('medium'); this.pendingOrderProductId = productId; this.selectedCompany = null;
+                this.haptic('medium'); this.pendingOrderProductId = productId; this.selectedCompany = null; this.isLocationConfirmed = false;
                 
-                const dError = document.getElementById('delivery-error'); if(dError) dError.classList.add('hidden');
-                const pError = document.getElementById('phone-error'); if(pError) pError.classList.add('hidden');
-                const gpError = document.getElementById('grab-phone-error'); if(gpError) gpError.classList.add('hidden');
-                const cError = document.getElementById('company-error'); if(cError) cError.classList.add('hidden');
+                const errors = ['delivery-error', 'phone-error', 'map-error', 'grab-phone-error', 'company-error'];
+                errors.forEach(e => { const el = document.getElementById(e); if(el) el.classList.add('hidden'); });
                 
                 const dSelect = document.getElementById('modal-delivery'); if(dSelect) dSelect.value = "";
                 const cFields = document.getElementById('conditional-fields'); if(cFields) cFields.classList.add('hidden');
                 const gFields = document.getElementById('grab-fields'); if(gFields) gFields.classList.add('hidden');
+                const mapContainer = document.getElementById('map-container'); if(mapContainer) mapContainer.classList.add('hidden');
+                const locBtn = document.getElementById('btn-get-location'); if(locBtn) locBtn.style.display = 'flex';
+                const coords = document.getElementById('map-coords'); if(coords) coords.classList.add('hidden');
+                const confBtn = document.getElementById('btn-confirm-location'); if(confBtn) confBtn.classList.add('hidden');
                 
                 document.querySelectorAll('.company-box').forEach(b => b.classList.remove('selected'));
                 
@@ -399,6 +427,43 @@
 
             selectCompany(companyName) { this.haptic('light'); this.selectedCompany = companyName; document.getElementById('company-error').classList.add('hidden'); document.querySelectorAll('.company-box').forEach(box => { box.classList.remove('selected'); }); if(companyName === 'VET') document.getElementById('company-vet').classList.add('selected'); if(companyName === 'J&T') document.getElementById('company-jnt').classList.add('selected'); if(companyName === 'Capitol') document.getElementById('company-capitol').classList.add('selected'); },
 
+            getGrabLocation() {
+                this.haptic('medium'); const b = document.getElementById('btn-get-location'); b.innerText = "📍 Locating...";
+                if (!navigator.geolocation) { alert("Geolocation not supported."); b.innerText = "📍 Get Current Location"; return; }
+                navigator.geolocation.getCurrentPosition((pos) => { this.mapLat = pos.coords.latitude; this.mapLng = pos.coords.longitude; b.style.display = "none"; this.initGoogleMap(this.mapLat, this.mapLng); }, () => { alert("Failed to get location."); b.innerText = "📍 Try Again"; });
+            },
+
+            initGoogleMap(lat, lng) {
+                const container = document.getElementById('map-container'); const div = document.getElementById('google-map'); const confirm = document.getElementById('btn-confirm-location');
+                container.classList.remove('hidden');
+                
+                // MOCK MAP FALLBACK - Stops the UI from crashing if API Key is missing!
+                const hasDummyKey = document.querySelector('script[src*="YOUR_GOOGLE_MAPS_API_KEY"]');
+                if (hasDummyKey || typeof google === 'undefined' || typeof google.maps === 'undefined') { 
+                    div.innerHTML = `
+                        <div class="flex flex-col items-center justify-center w-full h-full bg-blue-900/20 cursor-pointer rounded-xl p-2" onclick="app.simulateMapDrag()">
+                            <span class="text-2xl">🗺️</span>
+                            <span class="font-bold text-premiumWhite text-[10px] mt-1 uppercase">Mock Map Mode Active</span>
+                            <span class="text-[8px] text-premiumGray text-center mt-1">(Tap here to simulate dragging pin)<br>Add real API Key to HTML to view live map.</span>
+                        </div>
+                    `; 
+                    this.mapLat = lat; this.mapLng = lng; 
+                    confirm.classList.remove('hidden'); 
+                    return; 
+                }
+                
+                const center = { lat, lng }; this.googleMap = new google.maps.Map(div, { center, zoom: 16, disableDefaultUI: true, zoomControl: true });
+                this.mapMarker = new google.maps.Marker({ position: center, map: this.googleMap, draggable: true });
+                this.mapMarker.addListener('dragend', (e) => { this.mapLat = e.latLng.lat(); this.mapLng = e.latLng.lng(); this.isLocationConfirmed = false; confirm.innerText = "Confirm Marker Location"; confirm.classList.replace('bg-green-500', 'bg-blue-600'); });
+                confirm.classList.remove('hidden');
+            },
+
+            simulateMapDrag() {
+                this.haptic('light'); this.mapLat += 0.0001; this.mapLng += 0.0001; this.isLocationConfirmed = false;
+                const c = document.getElementById('btn-confirm-location'); c.innerText = "Confirm Marker Location"; c.classList.replace('bg-green-500', 'bg-blue-600');
+            },
+
+            confirmGrabLocation() { this.haptic('medium'); this.isLocationConfirmed = true; document.getElementById('map-error').classList.add('hidden'); const c = document.getElementById('btn-confirm-location'); c.innerText = "✅ Location Confirmed"; c.classList.replace('bg-blue-600', 'bg-green-500'); document.getElementById('map-coords').innerText = `${this.mapLat.toFixed(5)}, ${this.mapLng.toFixed(5)}`; document.getElementById('map-coords').classList.remove('hidden'); },
             clearPhoneError() { document.getElementById('phone-error').classList.add('hidden'); },
             clearGrabPhoneError() { document.getElementById('grab-phone-error').classList.add('hidden'); },
 
@@ -406,14 +471,14 @@
                 this.haptic('medium'); let valid = true; const d = document.getElementById('modal-delivery').value;
                 if (!d) { document.getElementById('delivery-error').classList.remove('hidden'); valid = false; }
                 if (d.includes('Standard')) { if (!this.selectedCompany) { document.getElementById('company-error').classList.remove('hidden'); valid = false; } if (!document.getElementById('modal-phone').value.trim()) { document.getElementById('phone-error').classList.remove('hidden'); valid = false; } }
-                if (d.includes('Grab')) { if (!document.getElementById('grab-phone').value.trim()) { document.getElementById('grab-phone-error').classList.remove('hidden'); valid = false; } }
+                if (d.includes('Grab')) { if (!this.isLocationConfirmed) { document.getElementById('map-error').classList.remove('hidden'); valid = false; } if (!document.getElementById('grab-phone').value.trim()) { document.getElementById('grab-phone-error').classList.remove('hidden'); valid = false; } }
                 if (!valid) return;
 
-                let items = []; let total = 0; if (this.pendingOrderProductId) { const p = products.find(i => i.id === this.pendingOrderProductId); if(p) { items.push(p); total = p.price; } } else { items = [...this.cart]; items.forEach(i => total += i.price); }
+                let items = []; let total = 0; if (this.pendingOrderProductId) { const p = products.find(i => i.id === this.pendingOrderProductId); if(p) { items.push(p); total = p.price; } } else { items = [...this.cart]; items.forEach(i => total += Number(i.price || 0)); }
                 let msg = `🛒 NEW ORDER\nMethod: ${d}\n`;
                 if (d.includes('Standard')) msg += `Company: ${this.selectedCompany}\nProvince: ${document.getElementById('modal-province').value}\nAddress: ${document.getElementById('modal-address').value || 'N/A'}\nPhone: ${document.getElementById('modal-phone').value}\n`;
-                if (d.includes('Grab')) msg += `Phone: ${document.getElementById('grab-phone').value}\n`;
-                msg += `Note: ${document.getElementById('modal-note').value || 'None'}\n\nItems:\n` + items.map((i, idx) => `${idx+1}. ${i.name} ($${i.price})`).join('\n') + `\nTotal: $${total.toFixed(2)}`;
+                if (d.includes('Grab')) msg += `Phone: ${document.getElementById('grab-phone').value}\nMap: http://googleusercontent.com/maps.google.com/maps?q=${this.mapLat},${this.mapLng}\n`;
+                msg += `Note: ${document.getElementById('modal-note').value || 'None'}\n\nItems:\n` + items.map((i, idx) => `${idx+1}. ${i.name} ($${i.price.toFixed(2)})`).join('\n') + `\nTotal: $${total.toFixed(2)}`;
                 
                 const inTelegram = this.tg && this.tg.initDataUnsafe && Object.keys(this.tg.initDataUnsafe).length > 0;
                 if (inTelegram && this.tg.sendData) {
@@ -425,12 +490,35 @@
                 this.closeOrderSummary();
             },
 
-            togglePanel() { this.haptic('light'); if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.isPanelOpen = !this.isPanelOpen; const p = document.getElementById('side-panel'); const o = document.getElementById('panel-overlay'); if (this.isPanelOpen) { p.classList.replace('translate-x-full', 'translate-x-0'); o.classList.remove('hidden'); setTimeout(() => o.classList.add('opacity-100'), 10); } else { p.classList.replace('translate-x-0', 'translate-x-full'); o.classList.remove('opacity-100'); setTimeout(() => o.classList.add('hidden'), 300); } },
-            toggleLeftPanel() { this.haptic('light'); if(this.isPanelOpen) this.togglePanel(); this.isLeftPanelOpen = !this.isLeftPanelOpen; const p = document.getElementById('left-panel'); const o = document.getElementById('left-panel-overlay'); if (this.isLeftPanelOpen) { p.classList.replace('-translate-x-full', 'translate-x-0'); o.classList.remove('hidden'); setTimeout(() => o.classList.add('opacity-100'), 10); } else { p.classList.replace('translate-x-0', '-translate-x-full'); o.classList.remove('opacity-100'); setTimeout(() => o.classList.add('hidden'), 300); } },
-            navigate(viewId) { this.haptic('light'); if(this.isPanelOpen) this.togglePanel(); if(this.isLeftPanelOpen) this.toggleLeftPanel(); document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); setTimeout(() => { const v = document.getElementById(`view-${viewId}`); if(v) v.classList.add('active'); }, 50); const h = document.getElementById('nav-home'); const c = document.getElementById('nav-cart'); if (viewId === 'home' || viewId === 'cart') { if(h) h.className = `flex flex-col items-center transition-colors ${viewId==='home'?'text-premiumWhite':'text-premiumGray hover:text-premiumWhite'}`; if(c) c.className = `flex flex-col items-center transition-colors relative ${viewId==='cart'?'text-premiumWhite':'text-premiumGray hover:text-premiumWhite'}`; try { this.tg?.BackButton?.hide?.(); } catch(e){} } else { try { this.tg?.BackButton?.show?.(); } catch(e){} } if (viewId === 'cart') this.renderCart(); window.scrollTo(0, 0); },
-            handlePriceFilter(type) { this.isPriceFilterActive = true; const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange'); let min = Number(mi.value); let max = Number(ma.value); if (type === 'min' && min > max - 1) { min = max - 1; mi.value = min; } if (type === 'max' && max < min + 1) { max = min + 1; ma.value = max; } this.minPrice = min; this.maxPrice = max; this.updateSliderUI(); this.renderCatalog(); },
-            updateSliderUI() { const l = document.getElementById('priceValue'); if(l) l.innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`; const t = document.getElementById('slider-track'); if(t) { t.style.left = ((this.minPrice / 1000) * 100) + '%'; t.style.right = (100 - ((this.maxPrice / 1000) * 100)) + '%'; } },
+            // SAFE CART RENDERING - Prevents the blank screen bug entirely
+            renderCart() {
+                try {
+                    const content = document.getElementById('cart-content');
+                    if(!content) return;
+                    if (this.cart.length === 0) {
+                        content.innerHTML = `<div class="text-center py-20"><span class="text-6xl mb-6 block opacity-30 grayscale filter">🛒</span><h3 class="text-premiumWhite font-bold uppercase tracking-widest mb-2">Your cart is empty</h3><p class="text-xs text-premiumGray mb-8">Looks like you haven't added any knives yet.</p><button onclick="app.navigate('home'); app.setCategory('home');" class="bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-3 px-8 rounded-xl active:scale-95 transition-transform shadow-sm">Go to Shopping</button></div>`;
+                        return;
+                    }
+                    let total = 0;
+                    let cartItemsHTML = this.cart.map((item, index) => {
+                        if (!item) return '';
+                        total += Number(item.price || 0);
+                        return `<div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm"><div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner"><img src="${item.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]"></div><div class="flex-1"><h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4><span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${Number(item.price).toFixed(2)}</span></div><button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>`;
+                    }).join('');
+                    content.innerHTML = `<div>${cartItemsHTML}</div><div class="mt-8 border-t border-premiumBorder pt-6"><div class="flex justify-between items-center mb-6"><span class="text-premiumGray uppercase tracking-widest font-bold text-xs">Total Price</span><span class="text-2xl font-black text-premiumWhite tracking-widest">$${total.toFixed(2)}</span></div><button onclick="app.openOrderSummary()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
+                } catch (e) {
+                    console.error("Cart render failed:", e);
+                }
+            },
+
+            addToCart(id) { this.haptic('medium'); const product = products.find(p => p.id === id); if (product) { this.cart.push(product); this.updateCartBadge(); } },
+            removeFromCart(index) { this.haptic('light'); this.cart.splice(index, 1); this.updateCartBadge(); this.renderCart(); },
             updateCartBadge() { const b = document.getElementById('cart-badge'); if(b){ b.innerText = this.cart.length; b.classList.toggle('hidden', this.cart.length === 0); } },
+            
+            togglePanel() { this.haptic('light'); if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.isPanelOpen = !this.isPanelOpen; const p = document.getElementById('side-panel'); const o = document.getElementById('panel-overlay'); if(!p || !o) return; if (this.isPanelOpen) { p.classList.replace('translate-x-full', 'translate-x-0'); o.classList.remove('hidden'); setTimeout(() => o.classList.add('opacity-100'), 10); } else { p.classList.replace('translate-x-0', 'translate-x-full'); o.classList.replace('opacity-100', 'opacity-0'); setTimeout(() => o.classList.add('hidden'), 300); } },
+            toggleLeftPanel() { this.haptic('light'); if(this.isPanelOpen) this.togglePanel(); this.isLeftPanelOpen = !this.isLeftPanelOpen; const p = document.getElementById('left-panel'); const o = document.getElementById('left-panel-overlay'); if(!p || !o) return; if (this.isLeftPanelOpen) { p.classList.replace('-translate-x-full', 'translate-x-0'); o.classList.remove('hidden'); setTimeout(() => o.classList.add('opacity-100'), 10); } else { p.classList.replace('translate-x-0', '-translate-x-full'); o.classList.replace('opacity-100', 'opacity-0'); setTimeout(() => o.classList.add('hidden'), 300); } },
+            navigate(viewId) { this.haptic('light'); if(this.isPanelOpen) this.togglePanel(); if(this.isLeftPanelOpen) this.toggleLeftPanel(); document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); setTimeout(() => { const v = document.getElementById(`view-${viewId}`); if(v) v.classList.add('active'); }, 50); const h = document.getElementById('nav-home'); const c = document.getElementById('nav-cart'); if (viewId === 'home' || viewId === 'cart') { if(h) h.className = `flex flex-col items-center transition-colors ${viewId==='home'?'text-premiumWhite':'text-premiumGray hover:text-premiumWhite'}`; if(c) c.className = `flex flex-col items-center transition-colors relative ${viewId==='cart'?'text-premiumWhite':'text-premiumGray hover:text-premiumWhite'}`; try { this.tg?.BackButton?.hide?.(); } catch(e){} } else { try { this.tg?.BackButton?.show?.(); } catch(e){} } if (viewId === 'cart') this.renderCart(); window.scrollTo(0, 0); },
+            
             setCategory(cat) { this.haptic('medium'); this.currentCategory = cat; this.searchQuery = ""; const si = document.getElementById('searchInput'); if(si) si.value = ""; if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.navigate('home'); this.renderCatalog(); },
             resetFilters() { this.haptic('medium'); this.searchQuery = ""; const s = document.getElementById('searchInput'); if (s) s.value = ""; this.minPrice = 0; this.maxPrice = 1000; this.isPriceFilterActive = false; const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange'); if(mi) mi.value = 0; if(ma) ma.value = 1000; this.updateSliderUI(); this.setCategory('home'); },
             applyTheme() { const k = document.getElementById('theme-toggle-knob'); document.body.classList.toggle('dark', this.isDarkMode); if(k) k.classList.toggle('translate-x-6', this.isDarkMode); try { this.tg?.setHeaderColor?.(this.isDarkMode?'#000000':'#f4f4f5'); this.tg?.setBackgroundColor?.(this.isDarkMode?'#000000':'#f4f4f5'); } catch(e){} },
