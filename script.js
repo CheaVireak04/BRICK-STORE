@@ -481,17 +481,23 @@ const app = {
         }
 
         // displayProducts = displayProducts.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
-            
-            // Ensure safe numeric comparison
-            const itemPrice = Number(product.price);
-            const minP = Number(this.minPrice);
-            const maxP = Number(this.maxPrice);
-            
-            const matchesPrice = itemPrice >= minP && itemPrice <= maxP;
-            
-            return matchesSearch && matchesPrice;
-        });
+    // 🛡️ SAFETY: Ensure product exists
+    if (!product) return false;
+
+    // 🔍 SEARCH FILTER
+    const matchesSearch = product.name
+        .toLowerCase()
+        .includes(this.searchQuery || "");
+
+    // 💰 PRICE FILTER (SAFE NUMBER CONVERSION)
+    const itemPrice = Number(product.price) || 0;
+    const minP = Number(this.minPrice) || 0;
+    const maxP = Number(this.maxPrice) || 1000;
+
+    const matchesPrice = itemPrice >= minP && itemPrice <= maxP;
+
+    return matchesSearch && matchesPrice;
+});
 
         // Debug Safety Fallback UI
         if (displayProducts.length === 0) {
