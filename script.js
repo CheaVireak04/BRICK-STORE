@@ -24,7 +24,7 @@ const products = [
 ];
 
 const app = {
-    tg: null, supportUsername: "Chea_Vireak",
+    tg: null, supportUsername: "@Chea_Vireak",
     searchQuery: "", minPrice: 0, maxPrice: 1000, isPriceFilterActive: false,
     cart: [], isPanelOpen: false, isLeftPanelOpen: false, isDarkMode: true, currentCategory: 'home',
     pendingOrderProductId: null,
