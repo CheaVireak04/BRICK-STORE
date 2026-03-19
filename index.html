@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRICK STORE</title>
+    <title>BRICK STORE | FINAL PREVIEW V1</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,41 +29,49 @@
             --text-sec: #a3a3a3;
         }
         
-        /* PREMIUM PAGE TRANSITION ANIMATIONS */
-        .view-section {
-            position: absolute;
-            width: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(15px) scale(0.98);
-            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
-            height: 0;
-            overflow: hidden;
+        /* [MOCK-UP FEATURE]: SKELETON LOADING ANIMATION */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--border) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
-        .view-section.active {
-            position: relative;
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1);
-            height: auto;
-            overflow: visible;
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+        /* [MOCK-UP FEATURE]: FLYING CART ICON ANIMATION */
+        .flying-item {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            width: 60px; height: 60px;
+            object-fit: contain;
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
         }
 
-        /* CUSTOM DUAL RANGE SLIDER STYLING */
+        /* [MOCK-UP FEATURE]: SEARCH HIGHLIGHTING */
+        .search-highlight { color: #3b82f6; text-decoration: underline; }
+
+        /* ORIGINAL SLIDER & PAGE ANIMATIONS */
+        .view-section {
+            position: absolute; width: 100%; top: 0; left: 0; opacity: 0; visibility: hidden;
+            transform: translateY(15px) scale(0.98);
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+            height: 0; overflow: hidden;
+        }
+        .view-section.active {
+            position: relative; opacity: 1; visibility: visible;
+            transform: translateY(0) scale(1); height: auto; overflow: visible;
+        }
+
         .dual-slider-container { position: relative; width: 100%; height: 4px; background-color: var(--border); border-radius: 4px; margin-top: 18px; margin-bottom: 12px; }
         .dual-slider-track { position: absolute; height: 100%; background-color: var(--text-main); border-radius: 4px; z-index: 1; pointer-events: none; }
         .dual-slider { position: absolute; width: 100%; top: -8px; appearance: none; -webkit-appearance: none; background: transparent; pointer-events: none; z-index: 3; margin: 0; padding: 0; }
         .dual-slider:focus { outline: none; }
         .dual-slider::-webkit-slider-thumb { pointer-events: auto; appearance: none; -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background-color: var(--text-main); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 2px 6px rgba(0,0,0,0.4); position: relative; z-index: 5; transition: transform 0.1s; }
-        .dual-slider::-webkit-slider-thumb:active { transform: scale(1.15); }
         .dual-slider::-moz-range-thumb { pointer-events: auto; appearance: none; width: 22px; height: 22px; border-radius: 50%; background-color: var(--text-main); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 2px 6px rgba(0,0,0,0.4); position: relative; z-index: 5; }
 
-        /* Smooth transitions for theme changes */
         body { transition: background-color 0.3s ease, color 0.3s ease; }
         .transition-colors { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .pb-safe { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 20px)); }
@@ -75,54 +83,41 @@
             theme: {
                 extend: {
                     colors: {
-                        premiumBlack: 'var(--bg-main)',
-                        premiumDark: 'var(--bg-sec)',
-                        premiumCard: 'var(--bg-card)',
-                        premiumBorder: 'var(--border)',
-                        premiumWhite: 'var(--text-main)',
-                        premiumGray: 'var(--text-sec)'
+                        premiumBlack: 'var(--bg-main)', premiumDark: 'var(--bg-sec)',
+                        premiumCard: 'var(--bg-card)', premiumBorder: 'var(--border)',
+                        premiumWhite: 'var(--text-main)', premiumGray: 'var(--text-sec)'
                     },
-                    fontFamily: {
-                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Helvetica Neue', 'sans-serif']
-                    }
+                    fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] }
                 }
             }
         }
     </script>
-    
-    <link rel="stylesheet" href="./style.css">
-    <script defer src="./script.js"></script>
 </head>
 
 <body class="dark bg-premiumBlack text-premiumWhite font-sans antialiased pb-24 select-none hide-scroll overflow-x-hidden">
 
-    <header class="fixed top-0 w-full bg-premiumBlack/90 backdrop-blur-md border-b border-premiumBorder z-50 px-4 py-4 flex justify-between items-center">
-        
+    <header class="fixed top-0 w-full bg-premiumBlack/90 backdrop-blur-md border-b border-premiumBorder z-50 px-4 py-4 flex justify-between items-center transition-colors">
         <div class="flex items-center gap-4">
             <button onclick="app.toggleLeftPanel()" class="text-premiumWhite active:scale-90 transition-transform">
                 <svg class="w-6 h-6 stroke-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
-            
             <div onclick="app.navigate('home'); app.setCategory('home');" class="cursor-pointer flex items-baseline gap-1 active:opacity-50 transition-opacity">
                 <h1 class="text-xl font-black tracking-[0.2em] uppercase">BRICK<span class="font-light text-premiumGray">STORE</span></h1>
-                <span class="text-[8px] font-bold text-premiumGray tracking-widest uppercase sm:inline">By Reak</span>
             </div>
         </div>
-        
         <button onclick="app.togglePanel()" class="text-premiumWhite active:scale-90 transition-transform">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
         </button>
     </header>
 
-    <main id="app-container" class="pt-24 px-4 relative">
-        
+    <main id="app-container" class="pt-24 px-4 relative max-w-2xl mx-auto">
         <section id="view-home" class="view-section active">
-            
             <div id="hero-banner-container">
                 <div class="relative w-full h-52 rounded-2xl overflow-hidden mb-6 border border-premiumBorder shadow-2xl flex items-center justify-center">
                     <img src="./hero-banner.jpg" alt="CS2 Premium Knives" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/20"></div>
                     <div class="relative z-10 text-center px-4">
+                        <span class="bg-blue-500 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block">MOCK-UP PREVIEW</span>
                         <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">CS2 DESK TOYS</h2>
                         <p class="text-[10px] text-white font-bold uppercase tracking-widest leading-relaxed mt-2 drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Limited-style CS2 knife replicas crafted for collectors.</p>
                     </div>
@@ -141,7 +136,6 @@
                             <label class="text-[10px] font-bold uppercase tracking-widest text-premiumGray">Price Range</label>
                             <span id="priceValue" class="text-sm font-black text-premiumWhite tracking-widest">$0.00 — $1000.00</span>
                         </div>
-                        
                         <div class="dual-slider-container">
                             <div id="slider-track" class="dual-slider-track" style="left: 0%; right: 0%;"></div>
                             <input type="range" id="minPriceRange" min="0" max="1000" value="0" oninput="app.handlePriceFilter('min')" class="dual-slider">
@@ -152,7 +146,6 @@
             </div>
 
             <h3 id="category-title" class="text-sm font-bold uppercase tracking-widest text-premiumGray mb-4 mt-2">Featured Knives</h3>
-            
             <div id="product-grid" class="grid grid-cols-2 gap-4 pb-10"></div>
         </section>
 
@@ -169,83 +162,32 @@
         </section>
     </main>
 
-    <div id="left-panel-overlay" onclick="app.toggleLeftPanel()" class="fixed inset-0 bg-black/60 z-[90] hidden backdrop-blur-sm transition-opacity opacity-0"></div>
-    <div id="left-panel" class="fixed inset-y-0 left-0 w-72 max-w-[85%] bg-premiumDark border-r border-premiumBorder z-[100] transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
-        
-        <div class="p-4 border-b border-premiumBorder flex justify-between items-center bg-premiumBlack transition-colors relative">
-            <span class="font-black uppercase tracking-widest text-sm text-premiumWhite mx-auto">Categories</span>
-            <button onclick="app.toggleLeftPanel()" class="text-premiumGray hover:text-premiumWhite active:scale-90 transition-transform absolute right-4">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-            </button>
-        </div>
-        
-        <div class="p-4 flex-1 overflow-y-auto hide-scroll space-y-2">
-            <button onclick="app.setCategory('home')" class="w-full text-left flex items-center gap-4 p-4 rounded-xl bg-premiumCard border border-transparent hover:border-premiumBorder active:scale-95 transition-all">
-                <span class="text-xl">🏠</span><span class="font-bold text-xs uppercase tracking-widest text-premiumWhite">Home</span>
-            </button>
-            <button onclick="app.setCategory('new')" class="w-full text-left flex items-center gap-4 p-4 rounded-xl bg-premiumCard border border-transparent hover:border-premiumBorder active:scale-95 transition-all">
-                <span class="text-xl">✨</span><span class="font-bold text-xs uppercase tracking-widest text-premiumWhite">New Arrivals</span>
-            </button>
-            <button onclick="app.setCategory('trending')" class="w-full text-left flex items-center gap-4 p-4 rounded-xl bg-premiumCard border border-transparent hover:border-premiumBorder active:scale-95 transition-all">
-                <span class="text-xl">🔥</span><span class="font-bold text-xs uppercase tracking-widest text-premiumWhite">Trending Now</span>
-            </button>
-            <button onclick="app.setCategory('deal')" class="w-full text-left flex items-center gap-4 p-4 rounded-xl bg-premiumCard border border-transparent hover:border-premiumBorder active:scale-95 transition-all">
-                <span class="text-xl">💎</span><span class="font-bold text-xs uppercase tracking-widest text-premiumWhite">Best Deal</span>
-            </button>
-            <button onclick="app.setCategory('selling')" class="w-full text-left flex items-center gap-4 p-4 rounded-xl bg-premiumCard border border-transparent hover:border-premiumBorder active:scale-95 transition-all">
-                <span class="text-xl">🏆</span><span class="font-bold text-xs uppercase tracking-widest text-premiumWhite">Best Selling</span>
-            </button>
+    <div id="order-modal" class="fixed inset-0 bg-black/80 z-[200] hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-premiumDark border border-premiumBorder w-full max-w-md rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform" id="order-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-black text-xl uppercase tracking-widest text-premiumWhite">Order Summary</h3>
+                <button onclick="app.closeOrderSummary()" class="text-premiumGray hover:text-premiumWhite"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
             
-            <div class="pt-6 pb-2 border-t border-premiumBorder mt-6">
-                <button onclick="app.shareApp()" class="w-full flex items-center justify-center gap-2 p-4 rounded-xl bg-premiumWhite text-premiumBlack font-black text-xs uppercase tracking-widest active:scale-95 transition-transform">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                    Share This App
-                </button>
+            <div class="space-y-5">
+                <div>
+                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Delivery Option</label>
+                    <select id="modal-delivery" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl outline-none appearance-none">
+                        <option value="Delivery (Standard)">Standard Delivery (2-3 Days)</option>
+                        <option value="Delivery (Express)">Express Delivery (Same Day)</option>
+                        <option value="Store Pickup">Store Pickup (Phnom Penh)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Note to Seller (Optional)</label>
+                    <textarea id="modal-note" placeholder="Any special requests?" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl h-24 resize-none outline-none placeholder-premiumGray"></textarea>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div id="panel-overlay" onclick="app.togglePanel()" class="fixed inset-0 bg-black/60 z-[90] hidden backdrop-blur-sm transition-opacity opacity-0"></div>
-    <div id="side-panel" class="fixed inset-y-0 right-0 w-80 max-w-[85%] bg-premiumDark border-l border-premiumBorder z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
-        <div class="p-4 border-b border-premiumBorder flex justify-between items-center bg-premiumBlack transition-colors">
-            <button onclick="app.togglePanel()" class="text-premiumGray hover:text-premiumWhite active:scale-90 transition-transform flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <button onclick="app.confirmOrder()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl mt-8 active:scale-95 transition-transform flex justify-center items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.27 6.32 6.32 6.32 0 006.16-5.33v-7.2a8.3 8.3 0 005.18 1.84V7.85a4.96 4.96 0 01-3.02-1.16z"/></svg>
+                Send to Telegram
             </button>
-            <span class="font-black uppercase tracking-widest text-sm text-premiumWhite">Menu</span>
-        </div>
-        
-        <div class="p-6 flex-1 overflow-y-auto hide-scroll space-y-8">
-            <div class="flex justify-between items-center bg-premiumCard p-4 rounded-xl border border-premiumBorder cursor-pointer transition-colors" onclick="app.toggleTheme()">
-                <span class="text-xs font-bold uppercase tracking-widest text-premiumWhite">Appearance</span>
-                <div class="relative w-12 h-6 rounded-full bg-premiumBorder transition-colors">
-                    <div id="theme-toggle-knob" class="absolute top-1 left-1 w-4 h-4 rounded-full bg-premiumWhite transition-transform transform translate-x-6"></div>
-                </div>
-            </div>
-
-            <div>
-                <h3 class="font-black text-premiumWhite uppercase tracking-widest text-sm mb-3 border-b border-premiumBorder pb-2 transition-colors">About Us</h3>
-                <p class="text-[11px] text-premiumGray leading-relaxed text-justify">
-                    BRICK STORE is a modern accessories shop established in 2025, specializing in CS:GO and CS2 knife collectibles, desk toys, and tech accessories.
-                </p>
-            </div>
-
-            <div>
-                <h3 class="font-black text-premiumWhite uppercase tracking-widest text-sm mb-4 border-b border-premiumBorder pb-2 transition-colors">Contact Us</h3>
-                <div class="space-y-4">
-                    <a href="https://www.facebook.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors">
-                        <svg class="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        BRICK.store
-                    </a>
-                    <a href="https://www.instagram.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors">
-                        <svg class="w-5 h-5 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        Brick.store
-                    </a>
-                    <a href="https://www.tiktok.com/@brick.theofficial" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors">
-                        <svg class="w-5 h-5 text-premiumWhite" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.27 6.32 6.32 6.32 0 006.16-5.33v-7.2a8.3 8.3 0 005.18 1.84V7.85a4.96 4.96 0 01-3.02-1.16z"/></svg>
-                        brick.theofficial
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -255,7 +197,6 @@
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Shopping</span>
             </button>
-            
             <button onclick="app.navigate('cart')" id="nav-cart" class="flex flex-col items-center text-premiumGray hover:text-premiumWhite transition-colors relative">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Cart</span>
@@ -263,5 +204,6 @@
             </button>
         </div>
     </nav>
+    <script defer src="./script_mock_version.js"></script>
 </body>
 </html>
