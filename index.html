@@ -11,12 +11,6 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    /* PREVENT DROPDOWN TEXT WRAPPING */
-        select, select option {
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
     <style>
         :root { --bg-main: #f4f4f5; --bg-sec: #ffffff; --bg-card: #e5e5e5; --border: #d4d4d8; --text-main: #000000; --text-sec: #52525b; }
         body.dark { --bg-main: #000000; --bg-sec: #0a0a0a; --bg-card: #111111; --border: #262626; --text-main: #ffffff; --text-sec: #a3a3a3; }
@@ -43,7 +37,12 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .pb-safe { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 20px)); }
-    </style>
+        /* PREVENT DROPDOWN TEXT WRAPPING */
+        select, select option {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }</style>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
