@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRICK STORE | FINAL STABLE V5</title>
+    <title>BRICK STORE | UNIFIED V5.1</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +23,9 @@
         .flying-item { position: fixed; z-index: 9999; pointer-events: none; width: 60px; height: 60px; object-fit: contain; transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
         
         .search-highlight { color: #3b82f6; font-weight: 900; }
+
+        .company-box { border: 2px solid var(--border); transition: all 0.2s ease; filter: grayscale(100%); opacity: 0.6; }
+        .company-box.selected { border-color: #3b82f6; filter: grayscale(0%); opacity: 1; background-color: rgba(59, 130, 246, 0.1); }
 
         .view-section { position: absolute; width: 100%; top: 0; left: 0; opacity: 0; visibility: hidden; transform: translateY(15px) scale(0.98); transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s; height: 0; overflow: hidden; }
         .view-section.active { position: relative; opacity: 1; visibility: visible; transform: translateY(0) scale(1); height: auto; overflow: visible; }
@@ -74,7 +77,7 @@
                     <img src="./hero-banner.jpg" alt="CS2 Premium Knives" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/20"></div>
                     <div class="relative z-10 text-center px-4">
-                        <span class="bg-blue-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block shadow-md">FINAL VERSION V5</span>
+                        <span class="bg-blue-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block shadow-md">UNIFIED V5.1</span>
                         <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">CS2 DESK TOYS</h2>
                         <p class="text-[10px] text-white font-bold uppercase tracking-widest leading-relaxed mt-2 drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Limited-style CS2 knife replicas crafted for collectors.</p>
                     </div>
@@ -145,9 +148,11 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         Get Current Location
                     </button>
+                    
                     <div id="map-container" class="w-full h-48 rounded-xl overflow-hidden hidden relative border border-premiumBorder">
                         <div id="google-map" class="w-full h-full bg-premiumCard flex items-center justify-center text-premiumGray text-xs text-center p-4">Loading Map...</div>
                     </div>
+                    
                     <p id="map-coords" class="text-[10px] text-blue-400 hidden text-center font-mono"></p>
                     <p id="map-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please pin your location</p>
                     <button id="btn-confirm-location" onclick="app.confirmGrabLocation()" class="w-full bg-blue-600 text-white font-bold text-xs py-3 rounded-xl hidden transition-colors">Confirm Marker Location</button>
@@ -160,6 +165,21 @@
                 </div>
 
                 <div id="conditional-fields" class="hidden space-y-4 p-4 bg-premiumBlack rounded-xl border border-premiumBorder">
+                    <div>
+                        <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Select Delivery Company <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div id="company-vet" onclick="app.selectCompany('VET')" class="company-box rounded-xl p-2 cursor-pointer flex justify-center items-center h-12 bg-premiumCard">
+                                <img src="https://via.placeholder.com/80x40/e5e5e5/000000?text=VET" alt="VET" class="h-full object-contain pointer-events-none">
+                            </div>
+                            <div id="company-jnt" onclick="app.selectCompany('J&T')" class="company-box rounded-xl p-2 cursor-pointer flex justify-center items-center h-12 bg-premiumCard">
+                                <img src="https://via.placeholder.com/80x40/e5e5e5/000000?text=J%26T" alt="J&T" class="h-full object-contain pointer-events-none">
+                            </div>
+                            <div id="company-capitol" onclick="app.selectCompany('Capitol')" class="company-box rounded-xl p-2 cursor-pointer flex justify-center items-center h-12 bg-premiumCard">
+                                <img src="https://via.placeholder.com/80x40/e5e5e5/000000?text=Capitol" alt="Capitol" class="h-full object-contain pointer-events-none">
+                            </div>
+                        </div>
+                        <p id="company-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please select a delivery company</p>
+                    </div>
                     <div>
                         <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Select City/Province <span class="text-red-500">*</span></label>
                         <select id="modal-province" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none appearance-none cursor-pointer truncate">
@@ -207,7 +227,7 @@
                 </div>
             </div>
 
-            <button onclick="app.confirmOrder()" class="w-full bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white shadow-lg font-black py-4 rounded-xl mt-8 active:scale-95 transition-transform flex justify-center items-center gap-2">
+            <button onclick="app.submitFinalOrder()" class="w-full bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white shadow-lg font-black py-4 rounded-xl mt-8 active:scale-95 transition-transform flex justify-center items-center gap-2">
                 <svg class="w-6 h-6 drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.88L12 17.25l-6.18 3.25L7 13.62l-5-4.87 6.91-1L12 1.5z"/>
                 </svg>
@@ -259,9 +279,7 @@
                 <h3 class="font-black text-premiumWhite uppercase tracking-widest text-sm mb-4 border-b border-premiumBorder pb-2 transition-colors">Contact Us</h3>
                 <div class="space-y-4">
                     <a href="https://www.facebook.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> BRICK.store </a>
-                    <a href="https://www.instagram.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> brick.theofficial </a>
-                    <a href="https://www.tiktok.com/@brick.theofficial" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors">
-                        <svg class="w-5 h-5 text-premiumWhite" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.27 6.32 6.32 6.32 0 006.16-5.33v-7.2a8.3 8.3 0 005.18 1.84V7.85a4.96 4.96 0 01-3.02-1.16z"/></svg>
+                    <a href="https://www.instagram.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                         brick.theofficial
                     </a>
                 </div>
@@ -272,7 +290,7 @@
     <nav class="fixed bottom-0 w-full bg-premiumBlack/90 backdrop-blur-md border-t border-premiumBorder z-40 pb-safe transition-colors">
         <div class="flex justify-around items-center p-4 max-w-md mx-auto">
             <button onclick="app.navigate('home'); app.setCategory('home');" id="nav-home" class="flex flex-col items-center text-premiumWhite transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Shopping</span>
             </button>
             <button onclick="app.navigate('cart')" id="nav-cart" class="flex flex-col items-center text-premiumGray hover:text-premiumWhite transition-colors relative">
@@ -283,6 +301,192 @@
         </div>
     </nav>
     
-    <script src="./script.js"></script>
+    <script>
+        const STORE_CONFIG = { maxNewArrivals: 4, maxTrending: 4, maxBestDeals: 4, maxBestSelling: 4, minPrice: 0, maxPrice: 1000 };
+
+        const products = [
+            { id: 1, name: "Karambit Doppler", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png"], desc: "Premium replica desk toy. Deep sapphire phases.", dateAdded: "2026-03-01", clicks: 450, sales: 85 },
+            { id: 2, name: "Karambit Fade", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png"], desc: "Premium replica desk toy. 100% fade pattern.", dateAdded: "2026-03-02", clicks: 600, sales: 120 },
+            { id: 3, name: "M9 Bayonet Crimson Web", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png"], desc: "Premium replica desk toy. Factory new look with webbing patterns.", dateAdded: "2026-03-03", clicks: 300, sales: 50 },
+            { id: 4, name: "Butterfly Knife Marble Fade", price: 12, oldPrice: 18, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png"], desc: "Premium replica desk toy. Smooth flipping action mechanism.", dateAdded: "2026-03-04", clicks: 800, sales: 200 },
+            { id: 5, name: "Butterfly Knife Tiger Tooth", price: 12, oldPrice: 18, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/616083695/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/616083695/playside.png"], desc: "Premium replica desk toy. Golden anodized finish.", dateAdded: "2026-03-05", clicks: 500, sales: 95 },
+            { id: 6, name: "Talon Knife Slaughter", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png"], desc: "Premium replica desk toy. Ivory-style handle.", dateAdded: "2026-03-06", clicks: 200, sales: 30 },
+            { id: 7, name: "Huntsman Knife Doppler", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png"], desc: "Premium replica desk toy. Aggressive serrated spine.", dateAdded: "2026-03-07", clicks: 350, sales: 60 },
+            { id: 8, name: "Flip Knife Fade", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png"], desc: "Premium replica desk toy. Sleek, foldable design.", dateAdded: "2026-03-08", clicks: 400, sales: 75 },
+            { id: 9, name: "Shadow Daggers Marble Fade", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png"], desc: "Premium replica desk toy. Dual-push daggers.", dateAdded: "2026-03-09", clicks: 150, sales: 20 },
+            { id: 10, name: "Bowie Knife Tiger Tooth", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png"], desc: "Premium replica desk toy. Massive display piece.", dateAdded: "2026-03-10", clicks: 250, sales: 40 }
+        ];
+
+        // GOOGLE MAPS API FAILURE BYPASS
+        window.gm_authFailure = function() {
+            const mapDiv = document.getElementById('google-map');
+            if(mapDiv) {
+                mapDiv.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full w-full bg-red-500/10 rounded-xl">
+                        <span class="text-red-500 font-black text-xs uppercase mb-1">Map Key Required</span>
+                        <span class="text-premiumGray text-[9px] px-2 leading-tight">Replace "YOUR_GOOGLE_MAPS_API_KEY" in the HTML to view the map.</span>
+                        <span class="text-blue-400 font-mono text-[10px] mt-2">Location Saved: ${app.mapLat.toFixed(4)}, ${app.mapLng.toFixed(4)}</span>
+                    </div>`;
+            }
+        };
+
+        const app = {
+            tg: null, supportUsername: "Chea_Vireak", searchQuery: "", minPrice: 0, maxPrice: 1000, isPriceFilterActive: false,
+            cart: [], isPanelOpen: false, isLeftPanelOpen: false, isDarkMode: true, currentCategory: 'home', pendingOrderProductId: null,
+            selectedCompany: null, mapLat: null, mapLng: null, isLocationConfirmed: false, googleMap: null, mapMarker: null,
+
+            init() {
+                try { this.tg = window.Telegram?.WebApp; this.tg?.expand?.(); this.tg?.ready?.(); } catch(e) {}
+                this.minPrice = Number(STORE_CONFIG.minPrice); this.maxPrice = Number(STORE_CONFIG.maxPrice);
+                try { this.isDarkMode = (localStorage.getItem('brickTheme') !== 'light'); } catch(e) { this.isDarkMode = true; }
+                const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange');
+                if(mi && ma) { mi.min = this.minPrice; mi.max = this.maxPrice; mi.value = this.minPrice; ma.min = this.minPrice; ma.max = this.maxPrice; ma.value = this.maxPrice; }
+                this.applyTheme(); this.updateSliderUI(); this.renderCatalog(); 
+            },
+
+            haptic(style = 'light') { try { this.tg?.HapticFeedback?.impactOccurred?.(style); } catch (e) {} },
+            highlightText(text) { if (!this.searchQuery) return text; const regex = new RegExp(`(${this.searchQuery})`, 'gi'); return text.replace(regex, '<span class="search-highlight">$1</span>'); },
+
+            handleSearch(event) {
+                this.searchQuery = event.target.value.toLowerCase().trim();
+                const suggestionsBox = document.getElementById('search-suggestions');
+                if (this.searchQuery.length > 0) {
+                    const matches = products.filter(p => p.name.toLowerCase().includes(this.searchQuery)).slice(0, 5);
+                    if (matches.length > 0) {
+                        suggestionsBox.innerHTML = matches.map(p => `<div onclick="app.selectSuggestion(${p.id})" class="p-3 hover:bg-premiumBlack cursor-pointer border-b border-premiumBorder last:border-0 flex items-center gap-3 transition-colors"><img src="${p.image}" class="w-8 h-8 object-contain rounded bg-[#0a0a0a] p-1"><span class="text-xs font-bold text-premiumWhite tracking-wide">${this.highlightText(p.name)}</span></div>`).join('');
+                        suggestionsBox.classList.remove('hidden'); suggestionsBox.classList.add('flex');
+                    } else { suggestionsBox.classList.add('hidden'); }
+                } else { suggestionsBox.classList.add('hidden'); }
+                this.renderCatalog(); 
+            },
+
+            selectSuggestion(id) { this.haptic('light'); document.getElementById('search-suggestions').classList.add('hidden'); document.getElementById('searchInput').value = ""; this.searchQuery = ""; this.viewProduct(id); },
+
+            animateAddToCart(productId, event) {
+                event.stopPropagation(); this.haptic('medium'); const p = products.find(i => i.id === productId); if (!p) return;
+                const fly = document.createElement('img'); fly.src = p.image; fly.className = 'flying-item';
+                const start = event.target.getBoundingClientRect(); const end = document.getElementById('nav-cart').getBoundingClientRect();
+                fly.style.top = `${start.top}px`; fly.style.left = `${start.left}px`; document.body.appendChild(fly);
+                setTimeout(() => { fly.style.top = `${end.top + 10}px`; fly.style.left = `${end.left + 10}px`; fly.style.transform = 'scale(0.2) rotate(360deg)'; fly.style.opacity = '0'; }, 20);
+                setTimeout(() => { fly.remove(); this.cart.push(p); this.updateCartBadge(); const c = document.getElementById('nav-cart'); c.style.transform = 'scale(1.2)'; setTimeout(() => c.style.transform = 'scale(1)', 150); }, 700);
+            },
+
+            renderCatalog() {
+                const grid = document.getElementById('product-grid'); if(!grid) return;
+                grid.innerHTML = Array(4).fill(`<div class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden shadow-sm p-3"><div class="w-full aspect-square skeleton rounded-lg mb-3"></div><div class="h-3 skeleton rounded w-3/4 mb-4"></div><div class="flex justify-between items-center"><div class="h-4 skeleton rounded w-1/3"></div><div class="h-6 w-6 skeleton rounded-full"></div></div></div>`).join('');
+                setTimeout(() => {
+                    let list = [...products].filter(p => {
+                        const s = p.name.toLowerCase().includes(this.searchQuery);
+                        let pr = true; if (this.isPriceFilterActive) pr = (Number(p.price) >= this.minPrice) && (Number(p.price) <= this.maxPrice);
+                        return s && pr;
+                    });
+                    if (this.currentCategory === 'new') { list.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)); list = list.slice(0, STORE_CONFIG.maxNewArrivals); } 
+                    else if (this.currentCategory === 'trending') { list.sort((a, b) => b.clicks - a.clicks); list = list.slice(0, STORE_CONFIG.maxTrending); }
+                    else if (this.currentCategory === 'deal') { list.sort((a, b) => Number(a.price) - Number(b.price)); list = list.slice(0, STORE_CONFIG.maxBestDeals); }
+                    else if (this.currentCategory === 'selling') { list.sort((a, b) => b.sales - a.sales); list = list.slice(0, STORE_CONFIG.maxBestSelling); }
+                    if (list.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-12 px-4"><span class="text-4xl mb-4 grayscale filter">🔍</span><p class="text-premiumGray text-sm mb-5">No items matched your search.</p><a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase text-xs underline">Go back home</a></div>`; return; }
+                    grid.innerHTML = list.map(p => `<div onclick="app.viewProduct(${p.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer shadow-sm hover:shadow-lg"><div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center p-2"><img src="${p.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]"></div><div class="p-3 flex-1 border-t border-premiumBorder bg-premiumCard"><div><h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${this.highlightText(p.name)}</h4></div><div class="mt-3 flex justify-between items-center"><span class="text-premiumWhite font-black text-sm">$${Number(p.price).toFixed(2)}</span><button onclick="app.animateAddToCart(${p.id}, event)" class="w-7 h-7 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack hover:bg-premiumWhite hover:text-premiumBlack transition-colors shadow-md"><svg class="w-3 h-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button></div></div></div>`).join('');
+                }, 500); 
+            },
+
+            viewProduct(id) {
+                const p = products.find(i => i.id === id); if (!p) return;
+                let gHTML = `<img src="${p.image}" class="w-full h-full object-contain p-4 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`;
+                if (p.gallery && p.gallery.length > 1) gHTML = `<div class="flex overflow-x-auto snap-x snap-mandatory hide-scroll h-full w-full">` + p.gallery.map(img => `<img src="${img}" class="w-full h-full object-contain p-4 snap-center shrink-0 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`).join('') + `</div>`;
+                const c = document.getElementById('product-detail-content');
+                if(c) c.innerHTML = `<div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm"><div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder relative">${gHTML}${p.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest">Swipe image →</div>` : ''}</div><div class="text-center"><h2 class="text-2xl font-black uppercase tracking-widest mb-2 text-premiumWhite">${p.name}</h2><div class="flex justify-center items-baseline gap-3 mb-2"><span class="text-2xl font-black text-premiumWhite tracking-widest">$${Number(p.price).toFixed(2)}</span><span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(p.oldPrice).toFixed(2)}</span></div></div></div><p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${p.desc}</p><div class="space-y-3"><button onclick="app.addToCart(${p.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Add to Cart</button><button onclick="app.openOrderSummary(${p.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
+                this.navigate('product');
+            },
+
+            openOrderSummary(productId = null) {
+                this.haptic('medium'); this.pendingOrderProductId = productId; this.isLocationConfirmed = false; this.selectedCompany = null;
+                
+                const dError = document.getElementById('delivery-error'); if(dError) dError.classList.add('hidden');
+                const pError = document.getElementById('phone-error'); if(pError) pError.classList.add('hidden');
+                const mError = document.getElementById('map-error'); if(mError) mError.classList.add('hidden');
+                const gpError = document.getElementById('grab-phone-error'); if(gpError) gpError.classList.add('hidden');
+                const cError = document.getElementById('company-error'); if(cError) cError.classList.add('hidden');
+                
+                const dSelect = document.getElementById('modal-delivery'); if(dSelect) dSelect.value = "";
+                const cFields = document.getElementById('conditional-fields'); if(cFields) cFields.classList.add('hidden');
+                const gFields = document.getElementById('grab-fields'); if(gFields) gFields.classList.add('hidden');
+                
+                document.querySelectorAll('.company-box').forEach(b => b.classList.remove('selected'));
+                
+                const modal = document.getElementById('order-modal'); const content = document.getElementById('order-modal-content');
+                if(!modal || !content) return;
+                modal.classList.remove('hidden'); modal.classList.add('flex');
+                setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('opacity-100'); content.classList.replace('scale-95', 'scale-100'); }, 10);
+            },
+
+            closeOrderSummary() { this.haptic('light'); const modal = document.getElementById('order-modal'); const content = document.getElementById('order-modal-content'); if(!modal || !content) return; modal.classList.remove('opacity-100'); modal.classList.add('opacity-0'); content.classList.replace('scale-100', 'scale-95'); setTimeout(() => { modal.classList.remove('flex'); modal.classList.add('hidden'); }, 300); },
+
+            handleDeliveryChange() {
+                const d = document.getElementById('modal-delivery').value; document.getElementById('delivery-error').classList.add('hidden');
+                document.getElementById('conditional-fields').classList.toggle('hidden', !d.includes('Standard'));
+                document.getElementById('grab-fields').classList.toggle('hidden', !d.includes('Grab'));
+            },
+
+            selectCompany(companyName) { this.haptic('light'); this.selectedCompany = companyName; document.getElementById('company-error').classList.add('hidden'); document.querySelectorAll('.company-box').forEach(box => { box.classList.remove('selected'); }); if(companyName === 'VET') document.getElementById('company-vet').classList.add('selected'); if(companyName === 'J&T') document.getElementById('company-jnt').classList.add('selected'); if(companyName === 'Capitol') document.getElementById('company-capitol').classList.add('selected'); },
+
+            getGrabLocation() {
+                this.haptic('medium'); const b = document.getElementById('btn-get-location'); b.innerText = "📍 Locating...";
+                if (!navigator.geolocation) { alert("Geolocation not supported."); b.innerText = "📍 Get Current Location"; return; }
+                navigator.geolocation.getCurrentPosition((pos) => { this.mapLat = pos.coords.latitude; this.mapLng = pos.coords.longitude; b.style.display = "none"; this.initGoogleMap(this.mapLat, this.mapLng); }, () => { alert("Failed to get location."); b.innerText = "📍 Try Again"; });
+            },
+
+            initGoogleMap(lat, lng) {
+                const container = document.getElementById('map-container'); const div = document.getElementById('google-map'); const confirm = document.getElementById('btn-confirm-location');
+                container.classList.remove('hidden');
+                if (typeof google === 'undefined' || typeof google.maps === 'undefined') { window.gm_authFailure(); confirm.classList.remove('hidden'); return; }
+                const center = { lat, lng }; this.googleMap = new google.maps.Map(div, { center, zoom: 16, disableDefaultUI: true, zoomControl: true });
+                this.mapMarker = new google.maps.Marker({ position: center, map: this.googleMap, draggable: true });
+                this.mapMarker.addListener('dragend', (e) => { this.mapLat = e.latLng.lat(); this.mapLng = e.latLng.lng(); this.isLocationConfirmed = false; confirm.innerText = "Confirm Marker Location"; confirm.classList.replace('bg-green-500', 'bg-blue-600'); });
+                confirm.classList.remove('hidden');
+            },
+
+            confirmGrabLocation() { this.haptic('medium'); this.isLocationConfirmed = true; document.getElementById('map-error').classList.add('hidden'); const c = document.getElementById('btn-confirm-location'); c.innerText = "✅ Location Confirmed"; c.classList.replace('bg-blue-600', 'bg-green-500'); document.getElementById('map-coords').innerText = `${this.mapLat.toFixed(5)}, ${this.mapLng.toFixed(5)}`; document.getElementById('map-coords').classList.remove('hidden'); },
+            clearPhoneError() { document.getElementById('phone-error').classList.add('hidden'); },
+            clearGrabPhoneError() { document.getElementById('grab-phone-error').classList.add('hidden'); },
+
+            submitFinalOrder() {
+                this.haptic('medium'); let valid = true; const d = document.getElementById('modal-delivery').value;
+                if (!d) { document.getElementById('delivery-error').classList.remove('hidden'); valid = false; }
+                if (d.includes('Standard')) { if (!this.selectedCompany) { document.getElementById('company-error').classList.remove('hidden'); valid = false; } if (!document.getElementById('modal-phone').value.trim()) { document.getElementById('phone-error').classList.remove('hidden'); valid = false; } }
+                if (d.includes('Grab')) { if (!this.isLocationConfirmed) { document.getElementById('map-error').classList.remove('hidden'); valid = false; } if (!document.getElementById('grab-phone').value.trim()) { document.getElementById('grab-phone-error').classList.remove('hidden'); valid = false; } }
+                if (!valid) return;
+
+                let items = []; let total = 0; if (this.pendingOrderProductId) { const p = products.find(i => i.id === this.pendingOrderProductId); if(p) { items.push(p); total = p.price; } } else { items = [...this.cart]; items.forEach(i => total += i.price); }
+                let msg = `🛒 NEW ORDER\nMethod: ${d}\n`;
+                if (d.includes('Standard')) msg += `Company: ${this.selectedCompany}\nProvince: ${document.getElementById('modal-province').value}\nAddress: ${document.getElementById('modal-address').value || 'N/A'}\nPhone: ${document.getElementById('modal-phone').value}\n`;
+                if (d.includes('Grab')) msg += `Phone: ${document.getElementById('grab-phone').value}\nMap: http://google.com/maps?q=$${this.mapLat},${this.mapLng}\n`;
+                msg += `Note: ${document.getElementById('modal-note').value || 'None'}\n\nItems:\n` + items.map((i, idx) => `${idx+1}. ${i.name} ($${i.price})`).join('\n') + `\nTotal: $${total.toFixed(2)}`;
+                
+                // TELEGRAM API CHECK - Safely fall back to URL open if not in Telegram App
+                const inTelegram = this.tg && this.tg.initDataUnsafe && Object.keys(this.tg.initDataUnsafe).length > 0;
+                if (inTelegram && this.tg.sendData) {
+                    this.tg.sendData(JSON.stringify({ method: d, items: items, total: total }));
+                } else {
+                    const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(msg)}`;
+                    window.open(url, '_blank');
+                }
+                this.closeOrderSummary();
+            },
+
+            togglePanel() { this.haptic('light'); if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.isPanelOpen = !this.isPanelOpen; const p = document.getElementById('side-panel'); const o = document.getElementById('panel-overlay'); if (this.isPanelOpen) { p.classList.replace('translate-x-full', 'translate-x-0'); o.classList.remove('hidden'); setTimeout(() => o.classList.add('opacity-100'), 10); } else { p.classList.replace('translate-x-0', 'translate-x-full'); o.classList.remove('opacity-100'); setTimeout(() => o.classList.add('hidden'), 300); } },
+            toggleLeftPanel() { this.haptic('light'); if(this.isPanelOpen) this.togglePanel(); this.isLeftPanelOpen = !this.isLeftPanelOpen; const p = document.getElementById('left-panel'); const o = document.getElementById('left-panel-overlay'); if (this.isLeftPanelOpen) { p.classList.replace('-translate-x-full', 'translate-x-0'); o.classList.remove('hidden'); setTimeout(() => o.classList.add('opacity-100'), 10); } else { p.classList.replace('translate-x-0', '-translate-x-full'); o.classList.remove('opacity-100'); setTimeout(() => o.classList.add('hidden'), 300); } },
+            navigate(viewId) { this.haptic('light'); if(this.isPanelOpen) this.togglePanel(); if(this.isLeftPanelOpen) this.toggleLeftPanel(); document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); setTimeout(() => { const v = document.getElementById(`view-${viewId}`); if(v) v.classList.add('active'); }, 50); const h = document.getElementById('nav-home'); const c = document.getElementById('nav-cart'); if (viewId === 'home' || viewId === 'cart') { if(h) h.className = `flex flex-col items-center transition-colors ${viewId==='home'?'text-premiumWhite':'text-premiumGray hover:text-premiumWhite'}`; if(c) c.className = `flex flex-col items-center transition-colors relative ${viewId==='cart'?'text-premiumWhite':'text-premiumGray hover:text-premiumWhite'}`; try { this.tg?.BackButton?.hide?.(); } catch(e){} } else { try { this.tg?.BackButton?.show?.(); } catch(e){} } if (viewId === 'cart') this.renderCart(); window.scrollTo(0, 0); },
+            handlePriceFilter(type) { this.isPriceFilterActive = true; const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange'); let min = Number(mi.value); let max = Number(ma.value); if (type === 'min' && min > max - 1) { min = max - 1; mi.value = min; } if (type === 'max' && max < min + 1) { max = min + 1; ma.value = max; } this.minPrice = min; this.maxPrice = max; this.updateSliderUI(); this.renderCatalog(); },
+            updateSliderUI() { const l = document.getElementById('priceValue'); if(l) l.innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`; const t = document.getElementById('slider-track'); if(t) { t.style.left = ((this.minPrice / 1000) * 100) + '%'; t.style.right = (100 - ((this.maxPrice / 1000) * 100)) + '%'; } },
+            updateCartBadge() { const b = document.getElementById('cart-badge'); if(b){ b.innerText = this.cart.length; b.classList.toggle('hidden', this.cart.length === 0); } },
+            setCategory(cat) { this.haptic('medium'); this.currentCategory = cat; this.searchQuery = ""; const si = document.getElementById('searchInput'); if(si) si.value = ""; if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.navigate('home'); this.renderCatalog(); },
+            resetFilters() { this.haptic('medium'); this.searchQuery = ""; const s = document.getElementById('searchInput'); if (s) s.value = ""; this.minPrice = 0; this.maxPrice = 1000; this.isPriceFilterActive = false; const mi = document.getElementById('minPriceRange'); const ma = document.getElementById('maxPriceRange'); if(mi) mi.value = 0; if(ma) ma.value = 1000; this.updateSliderUI(); this.setCategory('home'); },
+            applyTheme() { const k = document.getElementById('theme-toggle-knob'); document.body.classList.toggle('dark', this.isDarkMode); if(k) k.classList.toggle('translate-x-6', this.isDarkMode); try { this.tg?.setHeaderColor?.(this.isDarkMode?'#000000':'#f4f4f5'); this.tg?.setBackgroundColor?.(this.isDarkMode?'#000000':'#f4f4f5'); } catch(e){} },
+            toggleTheme() { this.haptic('medium'); this.isDarkMode = !this.isDarkMode; try{localStorage.setItem('brickTheme', this.isDarkMode?'dark':'light');}catch(e){} this.applyTheme(); },
+            shareApp() { const l = "https://t.me/BrickStoreApp_bot/Homepage"; const t = "Check out BRICK STORE!"; try { if (this.tg?.openTelegramLink) this.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(l)}&text=${encodeURIComponent(t)}`); else window.open(`https://t.me/share/url?url=${encodeURIComponent(l)}&text=${encodeURIComponent(t)}`, '_blank'); } catch(e){} }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { app.init(); });
+    </script>
 </body>
 </html>
