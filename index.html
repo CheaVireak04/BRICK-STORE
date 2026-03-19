@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRICK STORE | STABLE V6.1</title>
+    <title>BRICK STORE | STABLE FINAL</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,8 +23,11 @@
         
         /* UI ELEMENTS */
         .search-highlight { color: #3b82f6; font-weight: 900; }
-        .company-box { border: 2px solid var(--border); transition: all 0.2s ease; filter: grayscale(100%); opacity: 0.6; }
-        .company-box.selected { border-color: #3b82f6; filter: grayscale(0%); opacity: 1; background-color: rgba(59, 130, 246, 0.1); }
+        
+        /* FIX: FULL COLOR COMPANY LOGOS */
+        .company-box { border: 2px solid var(--border); transition: all 0.2s ease; opacity: 0.8; background-color: var(--bg-card); }
+        .company-box:hover { opacity: 1; border-color: #3b82f6; }
+        .company-box.selected { border-color: #3b82f6; opacity: 1; background-color: rgba(59, 130, 246, 0.1); box-shadow: 0 0 0 1px #3b82f6; }
 
         /* VIEW NAVIGATION */
         .view-section { position: absolute; width: 100%; top: 0; left: 0; opacity: 0; visibility: hidden; transform: translateY(15px) scale(0.98); transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s; height: 0; overflow: hidden; }
@@ -79,8 +82,8 @@
                     <img src="./hero-banner.jpg" alt="CS2 Premium Knives" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/20"></div>
                     <div class="relative z-10 text-center px-4">
-                        <span class="bg-blue-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block shadow-md">STABLE V6.1</span>
-                        <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">.</h2>
+                        <span class="bg-green-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block shadow-md">SYSTEM STABLE</span>
+                        <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">CS2 DESK TOYS</h2>
                         <p class="text-[10px] text-white font-bold uppercase tracking-widest leading-relaxed mt-2 drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Limited-style CS2 knife replicas crafted for collectors.</p>
                     </div>
                 </div>
@@ -137,8 +140,8 @@
                     <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Delivery Option <span class="text-red-500">*</span></label>
                     <select id="modal-delivery" onchange="app.handleDeliveryChange()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl outline-none appearance-none cursor-pointer truncate">
                             <option value="" disabled selected>Please select a delivery method</option>
-                            <option value="Standard (1-2 days)">Standard (1–2 days)</option>
-                            <option value="Grab Express (Phnom Penh)">Grab Express (Phnom Penh)</option>
+                            <option value="Standard Delivery (1-2 days)">Standard Delivery (1–2 days)</option>
+                            <option value="GrabExpress (Phnom Penh)">GrabExpress – Only in Phnom Penh</option>
                             <option value="Store Pickup">Store Pickup</option>
                     </select>
                     <p id="delivery-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please select a delivery method</p>
@@ -162,8 +165,8 @@
                             <div id="company-jnt" onclick="app.selectCompany('J&T')" class="company-box rounded-xl p-2 cursor-pointer flex justify-center items-center h-12 bg-premiumCard">
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR14ZxIWPL4ua777cTemr_v4dZykQ4uUBkOtvMIn_DMSKK5H6Hs3CQyp0mhI0nu7mAz0PXY-wpA0L2XP5ho3fK1b1bUudRwK7WYtHV8eQ&s=10" alt="J&T" class="h-full object-contain pointer-events-none">
                             </div>
-                            <div id="company-l192" onclick="app.selectCompany('Capitol')" class="company-box rounded-xl p-2 cursor-pointer flex justify-center items-center h-12 bg-premiumCard">
-                                <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQjJr4cZCuxXdd6s-sNuo_VolvXeyDL6tQqpdshMQAprJDR6kBK" alt="Capitol" class="h-full object-contain pointer-events-none">
+                            <div id="company-l192" onclick="app.selectCompany('L192')" class="company-box rounded-xl p-2 cursor-pointer flex justify-center items-center h-12 bg-premiumCard">
+                                <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQjJr4cZCuxXdd6s-sNuo_VolvXeyDL6tQqpdshMQAprJDR6kBK" alt="L192" class="h-full object-contain pointer-events-none">
                             </div>
                         </div>
                         <p id="company-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please select a delivery company</p>
@@ -172,7 +175,8 @@
                         <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Select City/Province <span class="text-red-500">*</span></label>
                         <select id="modal-province" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none appearance-none cursor-pointer truncate">
                             <option value="Phnom Penh">Phnom Penh</option>
-                            <option value="Banteay Meanchey - Krong Serei Saophoan">Banteay Meanchey</option>
+                            <option value="Banteay Meanchey - Krong Serei Saophoan">Krong Serei Saophoan - Banteay Meanchey</option>
+                            <option value="Banteay Meanchey - Poipet">Poipet - Banteay Meanchey</option>
                             <option value="Battambang">Battambang</option>
                             <option value="Kampong Cham">Kampong Cham</option>
                             <option value="Kampong Chhnang">Kampong Chhnang</option>
@@ -266,8 +270,12 @@
             <div>
                 <h3 class="font-black text-premiumWhite uppercase tracking-widest text-sm mb-4 border-b border-premiumBorder pb-2 transition-colors">Contact Us</h3>
                 <div class="space-y-4">
-                    <a href="https://www.facebook.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> BRICK.store </a>
-                    <a href="https://www.instagram.com/brick.theofficialstore" target="_blank" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    <a href="#" onclick="app.openSocial('https://www.facebook.com/brick.theofficialstore'); return false;" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> BRICK.store </a>
+                    <a href="#" onclick="app.openSocial('https://www.instagram.com/brick.theofficialstore'); return false;" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors"><svg class="w-5 h-5 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        brick.theofficial
+                    </a>
+                    <a href="#" onclick="app.openSocial('https://www.tiktok.com/@brick.theofficial'); return false;" class="flex items-center gap-3 text-xs font-bold text-premiumGray hover:text-premiumWhite transition-colors">
+                        <svg class="w-5 h-5 text-premiumWhite" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.27 6.32 6.32 6.32 0 006.16-5.33v-7.2a8.3 8.3 0 005.18 1.84V7.85a4.96 4.96 0 01-3.02-1.16z"/></svg>
                         brick.theofficial
                     </a>
                 </div>
@@ -278,7 +286,7 @@
     <nav class="fixed bottom-0 w-full bg-premiumBlack/90 backdrop-blur-md border-t border-premiumBorder z-40 pb-safe transition-colors">
         <div class="flex justify-around items-center p-4 max-w-md mx-auto">
             <button onclick="app.navigate('home'); app.setCategory('home');" id="nav-home" class="flex flex-col items-center text-premiumWhite transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Shopping</span>
             </button>
             <button onclick="app.navigate('cart')" id="nav-cart" class="flex flex-col items-center text-premiumGray hover:text-premiumWhite transition-colors relative">
@@ -337,6 +345,7 @@
 
             selectSuggestion(id) { this.haptic('light'); document.getElementById('search-suggestions').classList.add('hidden'); document.getElementById('searchInput').value = ""; this.searchQuery = ""; this.viewProduct(id); },
 
+            // FIX: ADD TO CART ANIMATION NOW PROPERLY LINKED
             animateAddToCart(productId, event) {
                 event.stopPropagation(); this.haptic('medium'); const p = products.find(i => i.id === productId); if (!p) return;
                 const fly = document.createElement('img'); fly.src = p.image; fly.className = 'flying-item';
@@ -369,7 +378,9 @@
                 let gHTML = `<img src="${p.image}" class="w-full h-full object-contain p-4 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`;
                 if (p.gallery && p.gallery.length > 1) gHTML = `<div class="flex overflow-x-auto snap-x snap-mandatory hide-scroll h-full w-full">` + p.gallery.map(img => `<img src="${img}" class="w-full h-full object-contain p-4 snap-center shrink-0 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">`).join('') + `</div>`;
                 const c = document.getElementById('product-detail-content');
-                if(c) c.innerHTML = `<div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm"><div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder relative">${gHTML}${p.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest">Swipe image →</div>` : ''}</div><div class="text-center"><h2 class="text-2xl font-black uppercase tracking-widest mb-2 text-premiumWhite">${p.name}</h2><div class="flex justify-center items-baseline gap-3 mb-2"><span class="text-2xl font-black text-premiumWhite tracking-widest">$${Number(p.price).toFixed(2)}</span><span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(p.oldPrice).toFixed(2)}</span></div></div></div><p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${p.desc}</p><div class="space-y-3"><button onclick="app.addToCart(${p.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Add to Cart</button><button onclick="app.openOrderSummary(${p.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
+                
+                // FIX: "ADD TO CART" NOW TRIGGERS ANIMATION PROPERLY
+                if(c) c.innerHTML = `<div class="bg-premiumCard p-5 rounded-xl border border-premiumBorder mb-6 shadow-sm"><div class="relative w-full aspect-square bg-[#0a0a0a] rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-premiumBorder relative">${gHTML}${p.gallery.length > 1 ? `<div class="absolute bottom-2 w-full text-center text-[8px] text-premiumGray font-bold uppercase tracking-widest">Swipe image →</div>` : ''}</div><div class="text-center"><h2 class="text-2xl font-black uppercase tracking-widest mb-2 text-premiumWhite">${p.name}</h2><div class="flex justify-center items-baseline gap-3 mb-2"><span class="text-2xl font-black text-premiumWhite tracking-widest">$${Number(p.price).toFixed(2)}</span><span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${Number(p.oldPrice).toFixed(2)}</span></div></div></div><p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${p.desc}</p><div class="space-y-3"><button onclick="app.animateAddToCart(${p.id}, event)" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Add to Cart</button><button onclick="app.openOrderSummary(${p.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
                 this.navigate('product');
             },
 
@@ -400,11 +411,13 @@
                 document.getElementById('grab-fields').classList.toggle('hidden', !d.includes('Grab'));
             },
 
-            selectCompany(companyName) { this.haptic('light'); this.selectedCompany = companyName; document.getElementById('company-error').classList.add('hidden'); document.querySelectorAll('.company-box').forEach(box => { box.classList.remove('selected'); }); if(companyName === 'VET') document.getElementById('company-vet').classList.add('selected'); if(companyName === 'J&T') document.getElementById('company-jnt').classList.add('selected'); if(companyName === 'Capitol') document.getElementById('company-capitol').classList.add('selected'); },
+            // FIX: SYNCHRONIZED ID TO MAKE L192 SELECTION WORK
+            selectCompany(companyName) { this.haptic('light'); this.selectedCompany = companyName; document.getElementById('company-error').classList.add('hidden'); document.querySelectorAll('.company-box').forEach(box => { box.classList.remove('selected'); }); if(companyName === 'VET') document.getElementById('company-vet').classList.add('selected'); if(companyName === 'J&T') document.getElementById('company-jnt').classList.add('selected'); if(companyName === 'L192') document.getElementById('company-l192').classList.add('selected'); },
 
             clearPhoneError() { document.getElementById('phone-error').classList.add('hidden'); },
             clearGrabPhoneError() { document.getElementById('grab-phone-error').classList.add('hidden'); },
 
+            // FIX: SECURE FINAL ORDER REDIRECT
             submitFinalOrder() {
                 this.haptic('medium'); let valid = true; const d = document.getElementById('modal-delivery').value;
                 if (!d) { document.getElementById('delivery-error').classList.remove('hidden'); valid = false; }
@@ -434,11 +447,11 @@
                 if (isGrab) msg += `Phone: ${document.getElementById('grab-phone').value}\n`;
                 msg += `Note: ${document.getElementById('modal-note').value || 'None'}\n\nItems:\n` + items.map((i, idx) => `${idx+1}. ${i.name} ($${Number(i.price).toFixed(2)})`).join('\n') + `\nTotal: $${total.toFixed(2)}`;
                 
-                const inTelegram = this.tg && this.tg.initDataUnsafe && Object.keys(this.tg.initDataUnsafe).length > 0;
-                if (inTelegram && this.tg.sendData) {
-                    this.tg.sendData(JSON.stringify({ method: d, items: items, total: total }));
+                // Forces safe redirect
+                const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(msg)}`;
+                if (this.tg && this.tg.openTelegramLink) {
+                    this.tg.openTelegramLink(url);
                 } else {
-                    const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(msg)}`;
                     window.open(url, '_blank');
                 }
                 this.closeOrderSummary();
@@ -462,6 +475,16 @@
                     content.innerHTML = `<div>${cartItemsHTML}</div><div class="mt-8 border-t border-premiumBorder pt-6"><div class="flex justify-between items-center mb-6"><span class="text-premiumGray uppercase tracking-widest font-bold text-xs">Total Price</span><span class="text-2xl font-black text-premiumWhite tracking-widest">$${total.toFixed(2)}</span></div><button onclick="app.openOrderSummary()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
                 } catch (e) {
                     console.error("Cart render failed:", e);
+                }
+            },
+
+            // FIX: PROPER SOCIAL LINK ROUTING
+            openSocial(url) {
+                this.haptic('light');
+                if (this.tg && this.tg.openLink) {
+                    this.tg.openLink(url);
+                } else {
+                    window.open(url, '_blank');
                 }
             },
 
