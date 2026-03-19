@@ -1,5 +1,5 @@
 // =========================================================================
-// ⚙️ APP SETTINGS (PREVIEW V3 - FULL VERSION)
+// ⚙️ APP SETTINGS (PREVIEW V3)
 // =========================================================================
 const STORE_CONFIG = {
     maxNewArrivals: 4,    
@@ -11,7 +11,7 @@ const STORE_CONFIG = {
 };
 
 // =========================================================================
-// 🛒 PRODUCT DATA (ALL 10 ITEMS INCLUDED)
+// 🛒 PRODUCT DATA (With Gallery feature)
 // =========================================================================
 const products = [
     { 
@@ -104,8 +104,7 @@ const app = {
     currentCategory: 'home',
     pendingOrderProductId: null,
 
-    // MAP & DELIVERY STATES
-    selectedCompany: null,
+    // MAP LOGIC
     mapLat: null,
     mapLng: null,
     isLocationConfirmed: false,
@@ -117,6 +116,7 @@ const app = {
         
         this.minPrice = Number(STORE_CONFIG.minPrice) || 0;
         this.maxPrice = Number(STORE_CONFIG.maxPrice) || 1000;
+        
         try { this.isDarkMode = (localStorage.getItem('brickTheme') !== 'light'); } catch(e) { this.isDarkMode = true; }
         
         const minInput = document.getElementById('minPriceRange');
@@ -145,6 +145,7 @@ const app = {
 
         if (this.searchQuery.length > 0) {
             const matches = products.filter(p => p.name.toLowerCase().includes(this.searchQuery)).slice(0, 5);
+
             if (matches.length > 0) {
                 suggestionsBox.innerHTML = matches.map(p => `
                     <div onclick="app.selectSuggestion(${p.id})" class="p-3 hover:bg-premiumBlack cursor-pointer border-b border-premiumBorder last:border-0 flex items-center gap-3 transition-colors">
@@ -162,7 +163,8 @@ const app = {
             suggestionsBox.classList.add('hidden');
             suggestionsBox.classList.remove('flex');
         }
-        this.renderCatalog();
+        
+        this.renderCatalog(); 
     },
 
     selectSuggestion(id) {
@@ -212,7 +214,13 @@ const app = {
         const grid = document.getElementById('product-grid');
         if(!grid) return;
         
-        const skeletonHTML = Array(4).fill(`<div class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden shadow-sm p-3"><div class="w-full aspect-square skeleton rounded-lg mb-3"></div><div class="h-3 skeleton rounded w-3/4 mb-4"></div><div class="flex justify-between items-center"><div class="h-4 skeleton rounded w-1/3"></div><div class="h-6 w-6 skeleton rounded-full"></div></div></div>`).join('');
+        const skeletonHTML = Array(4).fill(`
+            <div class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden shadow-sm p-3">
+                <div class="w-full aspect-square skeleton rounded-lg mb-3"></div>
+                <div class="h-3 skeleton rounded w-3/4 mb-4"></div>
+                <div class="flex justify-between items-center"><div class="h-4 skeleton rounded w-1/3"></div><div class="h-6 w-6 skeleton rounded-full"></div></div>
+            </div>
+        `).join('');
         grid.innerHTML = skeletonHTML;
 
         setTimeout(() => {
@@ -223,28 +231,40 @@ const app = {
             else if (this.currentCategory === 'deal') { displayProducts.sort((a, b) => Number(a.price) - Number(b.price)); displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestDeals); }
             else if (this.currentCategory === 'selling') { displayProducts.sort((a, b) => b.sales - a.sales); displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestSelling); }
 
-            displayProducts = displayProducts.filter(p => {
-                const matchesSearch = p.name.toLowerCase().includes(this.searchQuery);
+            displayProducts = displayProducts.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
                 let matchesPrice = true;
-                if (this.isPriceFilterActive) matchesPrice = (Number(p.price) >= this.minPrice) && (Number(p.price) <= this.maxPrice);
+                if (this.isPriceFilterActive) {
+                    const itemPrice = Number(product.price);
+                    matchesPrice = (itemPrice >= this.minPrice) && (itemPrice <= this.maxPrice);
+                }
                 return matchesSearch && matchesPrice;
             });
 
             if (displayProducts.length === 0) {
-                grid.innerHTML = `<div class="col-span-2 flex flex-col items-center justify-center py-12 text-center"><span class="text-4xl mb-4 opacity-50 grayscale filter">🔍</span><p class="text-premiumGray text-sm mb-5 px-4">No items matched your search or price filter.</p><a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase text-xs underline">Go back to homepage</a></div>`;
+                grid.innerHTML = `
+                    <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
+                        <span class="text-4xl mb-4 opacity-50 grayscale filter">🔍</span>
+                        <p class="text-premiumGray text-sm mb-5 px-4 leading-relaxed">No items matched your search or price filter.</p>
+                        <a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase tracking-widest text-xs underline underline-offset-4 active:scale-95 transition-transform hover:text-gray-300">Go back to homepage</a>
+                    </div>`;
                 return;
             }
 
-            grid.innerHTML = displayProducts.map(p => `
-                <div onclick="app.viewProduct(${p.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
+            grid.innerHTML = displayProducts.map(product => `
+                <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                     <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
-                        <img src="${p.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
+                        <img src="${product.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
                     </div>
                     <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder bg-premiumCard">
-                        <div><h4 class="font-bold text-xs uppercase tracking-wider mb-1 text-premiumWhite">${this.highlightText(p.name)}</h4></div>
+                        <div>
+                            <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${this.highlightText(product.name)}</h4>
+                        </div>
                         <div class="mt-3 flex justify-between items-center">
-                            <span class="text-premiumWhite font-black text-sm">$${Number(p.price).toFixed(2)}</span>
-                            <button onclick="app.animateAddToCart(${p.id}, event)" class="w-7 h-7 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack hover:bg-premiumWhite hover:text-premiumBlack transition-colors">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-premiumWhite font-black text-sm tracking-widest">$${Number(product.price).toFixed(2)}</span>
+                            </div>
+                            <button onclick="app.animateAddToCart(${product.id}, event)" class="w-7 h-7 rounded-full border border-premiumBorder flex items-center justify-center text-premiumWhite bg-premiumBlack hover:bg-premiumWhite hover:text-premiumBlack transition-colors shadow-md">
                                 <svg class="w-3 h-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                             </button>
                         </div>
@@ -301,16 +321,27 @@ const app = {
         this.haptic('medium');
         this.pendingOrderProductId = productId; 
         
-        this.selectedCompany = null;
+        // Clear old states
         this.isLocationConfirmed = false;
-        document.querySelectorAll('.company-box').forEach(b => b.classList.remove('selected'));
-        document.getElementById('delivery-error')?.classList.add('hidden');
-        document.getElementById('company-error')?.classList.add('hidden');
-        document.getElementById('phone-error')?.classList.add('hidden');
-        document.getElementById('map-error')?.classList.add('hidden');
-        document.getElementById('modal-delivery').value = "";
-        document.getElementById('conditional-fields')?.classList.add('hidden');
-        document.getElementById('grab-fields')?.classList.add('hidden');
+        
+        const dError = document.getElementById('delivery-error');
+        const pError = document.getElementById('phone-error');
+        const mError = document.getElementById('map-error');
+        const gPhoneError = document.getElementById('grab-phone-error');
+        
+        const dSelect = document.getElementById('modal-delivery');
+        const cFields = document.getElementById('conditional-fields');
+        const gFields = document.getElementById('grab-fields');
+        const gPhone = document.getElementById('grab-phone');
+        
+        if(dError) dError.classList.add('hidden');
+        if(pError) pError.classList.add('hidden');
+        if(mError) mError.classList.add('hidden');
+        if(gPhoneError) gPhoneError.classList.add('hidden');
+        if(dSelect) dSelect.value = "";
+        if(cFields) cFields.classList.add('hidden');
+        if(gFields) gFields.classList.add('hidden');
+        if(gPhone) gPhone.value = "";
         
         const modal = document.getElementById('order-modal');
         const content = document.getElementById('order-modal-content');
@@ -355,18 +386,10 @@ const app = {
         }
     },
 
-    selectCompany(companyName) {
-        this.haptic('light');
-        this.selectedCompany = companyName;
-        document.getElementById('company-error').classList.add('hidden');
-        document.querySelectorAll('.company-box').forEach(box => { box.classList.remove('selected'); });
-        if(companyName === 'VET') document.getElementById('company-vet').classList.add('selected');
-        if(companyName === 'J&T') document.getElementById('company-jnt').classList.add('selected');
-        if(companyName === 'Capitol') document.getElementById('company-capitol').classList.add('selected');
-    },
-
     clearPhoneError() { document.getElementById('phone-error').classList.add('hidden'); },
+    clearGrabPhoneError() { document.getElementById('grab-phone-error').classList.add('hidden'); },
 
+    // GRAB EXPRESS MAP LOGIC
     getGrabLocation() {
         this.haptic('medium');
         const btn = document.getElementById('btn-get-location');
@@ -387,7 +410,7 @@ const app = {
             },
             (error) => {
                 console.error("Error getting location:", error);
-                alert("Failed to get location. Please check your device permissions.");
+                alert("Failed to get location. Please check your device settings.");
                 btn.innerText = "📍 Try Again";
             }
         );
@@ -400,8 +423,9 @@ const app = {
         
         mapContainer.classList.remove('hidden');
         
+        // Fallback if API Key is missing
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-            mapDiv.innerHTML = "<span class='text-red-500'>Google Maps API Key Missing.<br>Location saved internally.</span>";
+            mapDiv.innerHTML = `<span class='text-red-500 font-bold'>Google Maps API Error.</span><br>Please insert a valid API Key in the HTML.<br><br>Coords Saved: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             this.mapLat = lat; this.mapLng = lng;
             confirmBtn.classList.remove('hidden');
             return;
@@ -452,16 +476,20 @@ const app = {
         const isGrab = delivery.includes('Grab');
         
         const phone = document.getElementById('modal-phone').value.trim();
+        const grabPhone = document.getElementById('grab-phone')?.value.trim();
         const note = document.getElementById('modal-note').value.trim();
         
         if (isStandard) {
-            if (!this.selectedCompany) { document.getElementById('company-error').classList.remove('hidden'); isValid = false; }
             if (!phone) { document.getElementById('phone-error').classList.remove('hidden'); isValid = false; }
         }
 
         if (isGrab) {
             if (!this.isLocationConfirmed || !this.mapLat || !this.mapLng) {
                 document.getElementById('map-error').classList.remove('hidden');
+                isValid = false;
+            }
+            if (!grabPhone) {
+                document.getElementById('grab-phone-error').classList.remove('hidden');
                 isValid = false;
             }
         }
@@ -472,8 +500,10 @@ const app = {
 
         if (this.pendingOrderProductId) {
             const p = products.find(i => i.id === this.pendingOrderProductId);
-            orderData.cart_items.push({ name: p.name, price: p.price });
-            orderData.total_price = p.price;
+            if (p) {
+                orderData.cart_items.push({ name: p.name, price: p.price });
+                orderData.total_price = p.price;
+            }
         } else {
             this.cart.forEach(p => {
                 orderData.cart_items.push({ name: p.name, price: p.price });
@@ -486,21 +516,17 @@ const app = {
         if (isStandard) {
             const province = document.getElementById('modal-province').value;
             const address = document.getElementById('modal-address').value;
-            orderData.customer_info = { company: this.selectedCompany, location: province, address: address, phone: phone };
-            message += `Company: ${this.selectedCompany}\n`;
-            message += `Location: ${province}\n`;
-            message += `Address: ${address || 'N/A'}\n`;
-            message += `Phone: ${phone}\n`;
+            orderData.customer_info = { location: province, address: address, phone: phone };
+            message += `Location: ${province}\nAddress: ${address || 'N/A'}\nPhone: ${phone}\n`;
         }
         
         if (isGrab) {
-            const mapLink = `https://www.google.com/maps?q=$${this.mapLat},${this.mapLng}`;
-            orderData.customer_info = { lat: this.mapLat, lng: this.mapLng, mapLink: mapLink };
-            message += `Map Link: ${mapLink}\n`;
+            const mapLink = `http://googleusercontent.com/maps.google.com/maps?q=${this.mapLat},${this.mapLng}`;
+            orderData.customer_info = { lat: this.mapLat, lng: this.mapLng, mapLink: mapLink, phone: grabPhone };
+            message += `Phone: ${grabPhone}\nMap Link: ${mapLink}\n`;
         }
 
-        message += `Note: ${note || 'None'}\n\n`;
-        message += `Items:\n`;
+        message += `Note: ${note || 'None'}\n\nItems:\n`;
         orderData.cart_items.forEach((item, idx) => { message += `${idx + 1}. ${item.name} - $${item.price.toFixed(2)}\n`; });
         message += `\nTotal Price: $${orderData.total_price.toFixed(2)}`;
 
@@ -513,6 +539,7 @@ const app = {
         this.closeOrderSummary();
     },
 
+    // --- STANDARD UI LOGIC ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
@@ -520,14 +547,8 @@ const app = {
         const panel = document.getElementById('side-panel');
         const overlay = document.getElementById('panel-overlay');
         if(!panel || !overlay) return;
-        
-        if (this.isPanelOpen) {
-            panel.classList.remove('translate-x-full'); panel.classList.add('translate-x-0');
-            overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10);
-        } else {
-            panel.classList.remove('translate-x-0'); panel.classList.add('translate-x-full');
-            overlay.classList.remove('opacity-100'); setTimeout(() => overlay.classList.add('hidden'), 300);
-        }
+        if (this.isPanelOpen) { panel.classList.remove('translate-x-full'); panel.classList.add('translate-x-0'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10); } 
+        else { panel.classList.remove('translate-x-0'); panel.classList.add('translate-x-full'); overlay.classList.remove('opacity-100'); setTimeout(() => overlay.classList.add('hidden'), 300); }
     },
 
     toggleLeftPanel() { 
@@ -537,14 +558,8 @@ const app = {
         const panel = document.getElementById('left-panel');
         const overlay = document.getElementById('left-panel-overlay');
         if(!panel || !overlay) return;
-        
-        if (this.isLeftPanelOpen) {
-            panel.classList.remove('-translate-x-full'); panel.classList.add('translate-x-0');
-            overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10);
-        } else {
-            panel.classList.remove('translate-x-0'); panel.classList.add('-translate-x-full');
-            overlay.classList.remove('opacity-100'); setTimeout(() => overlay.classList.add('hidden'), 300);
-        }
+        if (this.isLeftPanelOpen) { panel.classList.remove('-translate-x-full'); panel.classList.add('translate-x-0'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10); } 
+        else { panel.classList.remove('translate-x-0'); panel.classList.add('-translate-x-full'); overlay.classList.remove('opacity-100'); setTimeout(() => overlay.classList.add('hidden'), 300); }
     },
 
     navigate(viewId) {
@@ -555,48 +570,31 @@ const app = {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         setTimeout(() => { const target = document.getElementById(`view-${viewId}`); if(target) target.classList.add('active'); }, 50);
 
-        const navHome = document.getElementById('nav-home');
-        const navCart = document.getElementById('nav-cart');
-        
+        const navHome = document.getElementById('nav-home'); const navCart = document.getElementById('nav-cart');
         if (viewId === 'home' || viewId === 'cart') {
             if(navHome) navHome.className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             if(navCart) navCart.className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             try { this.tg?.BackButton?.hide?.(); } catch(e){}
         } else { try { this.tg?.BackButton?.show?.(); } catch(e){} }
-
         if (viewId === 'cart') { this.renderCart(); }
         window.scrollTo(0, 0);
     },
 
     handlePriceFilter(type) {
         this.isPriceFilterActive = true;
-        const minInput = document.getElementById('minPriceRange'); 
-        const maxInput = document.getElementById('maxPriceRange');
+        const minInput = document.getElementById('minPriceRange'); const maxInput = document.getElementById('maxPriceRange');
         if(!minInput || !maxInput) return;
-        
-        let minVal = Number(minInput.value); 
-        let maxVal = Number(maxInput.value);
+        let minVal = Number(minInput.value); let maxVal = Number(maxInput.value);
         const gap = 1; 
-        
-        if (type === 'min') {
-            if (minVal > maxVal - gap) { minVal = maxVal - gap; minInput.value = minVal; }
-            minInput.style.zIndex = "4"; maxInput.style.zIndex = "3";
-        }
-        if (type === 'max') {
-            if (maxVal < minVal + gap) { maxVal = minVal + gap; maxInput.value = maxVal; }
-            maxInput.style.zIndex = "4"; minInput.style.zIndex = "3";
-        }
-        
-        this.minPrice = minVal; 
-        this.maxPrice = maxVal;
-        this.updateSliderUI(); 
-        this.renderCatalog();
+        if (type === 'min') { if (minVal > maxVal - gap) { minVal = maxVal - gap; minInput.value = minVal; } minInput.style.zIndex = "4"; maxInput.style.zIndex = "3"; }
+        if (type === 'max') { if (maxVal < minVal + gap) { maxVal = minVal + gap; maxInput.value = maxVal; } maxInput.style.zIndex = "4"; minInput.style.zIndex = "3"; }
+        this.minPrice = minVal; this.maxPrice = maxVal;
+        this.updateSliderUI(); this.renderCatalog();
     },
 
     updateSliderUI() {
         const label = document.getElementById('priceValue');
         if(label) label.innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`;
-        
         const track = document.getElementById('slider-track');
         const rangeTotal = STORE_CONFIG.maxPrice - STORE_CONFIG.minPrice;
         if(track && rangeTotal > 0) {
@@ -608,55 +606,21 @@ const app = {
     renderCart() {
         const content = document.getElementById('cart-content');
         if(!content) return;
-        
         if (this.cart.length === 0) {
-            content.innerHTML = `
-                <div class="text-center py-20">
-                    <span class="text-6xl mb-6 block opacity-30 grayscale filter">🛒</span>
-                    <h3 class="text-premiumWhite font-bold uppercase tracking-widest mb-2">Your cart is empty</h3>
-                    <p class="text-xs text-premiumGray mb-8">Looks like you haven't added any knives yet.</p>
-                    <button onclick="app.navigate('home'); app.setCategory('home');" class="bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-3 px-8 rounded-xl active:scale-95 transition-transform shadow-sm">Go to Shopping</button>
-                </div>`;
+            content.innerHTML = `<div class="text-center py-20"><span class="text-6xl mb-6 block opacity-30 grayscale filter">🛒</span><h3 class="text-premiumWhite font-bold uppercase tracking-widest mb-2">Your cart is empty</h3><p class="text-xs text-premiumGray mb-8">Looks like you haven't added any knives yet.</p><button onclick="app.navigate('home'); app.setCategory('home');" class="bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-3 px-8 rounded-xl active:scale-95 transition-transform shadow-sm">Go to Shopping</button></div>`;
             return;
         }
 
         let total = 0;
         let cartItemsHTML = this.cart.map((item, index) => {
             total += Number(item.price);
-            return `
-                <div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm">
-                    <div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner">
-                        <img src="${item.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]">
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4>
-                        <span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${Number(item.price).toFixed(2)}</span>
-                    </div>
-                    <button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
-                </div>`;
+            return `<div class="bg-premiumCard border border-premiumBorder p-3 rounded-xl flex items-center gap-4 mb-3 shadow-sm"><div class="w-16 h-16 bg-[#0a0a0a] rounded-lg flex items-center justify-center p-2 border border-premiumBorder shadow-inner"><img src="${item.image}" class="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]"></div><div class="flex-1"><h4 class="font-bold text-xs uppercase tracking-wider text-premiumWhite leading-tight">${item.name}</h4><span class="text-premiumGray text-sm font-light tracking-widest block mt-1">$${Number(item.price).toFixed(2)}</span></div><button onclick="app.removeFromCart(${index})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center active:scale-90 transition-transform"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>`;
         }).join('');
 
-        content.innerHTML = `
-            <div>${cartItemsHTML}</div>
-            <div class="mt-8 border-t border-premiumBorder pt-6">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-premiumGray uppercase tracking-widest font-bold text-xs">Total Price</span>
-                    <span class="text-2xl font-black text-premiumWhite tracking-widest">$${total.toFixed(2)}</span>
-                </div>
-                <button onclick="app.openOrderSummary()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
-                    BUY NOW
-                </button>
-            </div>`;
+        content.innerHTML = `<div>${cartItemsHTML}</div><div class="mt-8 border-t border-premiumBorder pt-6"><div class="flex justify-between items-center mb-6"><span class="text-premiumGray uppercase tracking-widest font-bold text-xs">Total Price</span><span class="text-2xl font-black text-premiumWhite tracking-widest">$${total.toFixed(2)}</span></div><button onclick="app.openOrderSummary()" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">BUY NOW</button></div>`;
     },
 
-    addToCart(id) {
-        this.haptic('medium');
-        const product = products.find(p => p.id === id);
-        if (product) { this.cart.push(product); this.updateCartBadge(); }
-    },
+    addToCart(id) { this.haptic('medium'); const product = products.find(p => p.id === id); if (product) { this.cart.push(product); this.updateCartBadge(); } },
     removeFromCart(index) { this.haptic('light'); this.cart.splice(index, 1); this.updateCartBadge(); this.renderCart(); },
     updateCartBadge() { const b = document.getElementById('cart-badge'); if(b) { b.innerText = this.cart.length; b.classList.toggle('hidden', this.cart.length === 0); } },
     setCategory(cat) { this.haptic('medium'); this.currentCategory = cat; this.searchQuery = ""; const si = document.getElementById('searchInput'); if(si) si.value = ""; if(this.isLeftPanelOpen) this.toggleLeftPanel(); this.navigate('home'); this.renderCatalog(); },
