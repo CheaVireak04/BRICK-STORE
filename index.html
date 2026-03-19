@@ -11,6 +11,12 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+    /* PREVENT DROPDOWN TEXT WRAPPING */
+        select, select option {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
     <style>
         :root { --bg-main: #f4f4f5; --bg-sec: #ffffff; --bg-card: #e5e5e5; --border: #d4d4d8; --text-main: #000000; --text-sec: #52525b; }
         body.dark { --bg-main: #000000; --bg-sec: #0a0a0a; --bg-card: #111111; --border: #262626; --text-main: #ffffff; --text-sec: #a3a3a3; }
@@ -127,7 +133,7 @@
             <div class="space-y-5">
                 <div>
                     <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Delivery Option <span class="text-red-500">*</span></label>
-                    <select id="modal-delivery" onchange="app.handleDeliveryChange()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl outline-none appearance-none cursor-pointer">
+                    <select id="modal-delivery" onchange="app.handleDeliveryChange()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl outline-none appearance-none cursor-pointer truncate">
                         <option value="" disabled selected>Please select a delivery method</option>
                         <option value="Standard Delivery (1-2 days)">Standard Delivery (1–2 days)</option>
                         <option value="GrabExpress (Phnom Penh)">GrabExpress – Only in Phnom Penh</option>
@@ -139,18 +145,17 @@
                 <div id="conditional-fields" class="hidden space-y-4 p-4 bg-premiumBlack rounded-xl border border-premiumBorder">
                     <div>
                         <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Select City/Province <span class="text-red-500">*</span></label>
-                        <select id="modal-province" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none appearance-none cursor-pointer">
+                        <select id="modal-province" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none appearance-none cursor-pointer truncate">
                             <option value="Phnom Penh">Phnom Penh</option>
-                            <option value="Banteay Meanchey - Krong Serei Saophoan">Krong Serei Saophoan - Banteay Meanchey</option>
-                            <option value="Banteay Meanchey - Poipet">Poipet - Banteay Meanchey</option>
+                            <option value="Banteay Meanchey - Krong Serei Saophoan">Banteay Meanchey</option>
                             <option value="Battambang">Battambang</option>
                             <option value="Kampong Cham">Kampong Cham</option>
                             <option value="Kampong Chhnang">Kampong Chhnang</option>
                             <option value="Kampong Speu">Kampong Speu</option>
                             <option value="Kampong Thom">Kampong Thom</option>
-                            <option value="Kampot - Krong Kampot">Krong Kampot - Kampot</option>
+                            <option value="Kampot - Krong Kampot">Kampot</option>
                             <option value="Kandal">Kandal</option>
-                            <option value="Kep - Krong Kep">Krong Kep - Kep</option>
+                            <option value="Kep - Krong Kep">Kep</option>
                             <option value="Koh Kong">Koh Kong</option>
                             <option value="Kratie">Kratie</option>
                             <option value="Mondulkiri">Mondulkiri</option>
