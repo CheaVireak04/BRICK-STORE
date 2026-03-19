@@ -1,31 +1,31 @@
 // =========================================================================
-// ⚙️ APP SETTINGS (EASY TO EDIT FOR NON-TECHNICAL USERS)
+// ⚙️ APP SETTINGS (CHANGE NUMBER OF ITEMS DISPLAYED HERE)
 // =========================================================================
 const STORE_CONFIG = {
-    // --- DISPLAY LIMITS FOR CATEGORIES ---
     maxNewArrivals: 4,    
     maxTrending: 4,       
     maxBestDeals: 4,      
     maxBestSelling: 4,    
     
-    // // Change these values if your products cost more than $1000
-    minPriceLimit: 0,
-    maxPriceLimit: 1000
+    // minPriceRange: 0,
+    // maxPriceRange: 1000
 };
 
 // =========================================================================
 // 🛒 PRODUCT DATA (ADD NEW PRODUCTS & EDIT PRICES HERE)
 // =========================================================================
-// * Note: Ensure 'price' and 'oldPrice' are Numbers (e.g., 12), not strings ("$12")
+
 const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        price: 12, 
+        // price: 12, 
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand.",
-        dateAdded: "2026-03-01", clicks: 450, sales: 85
+        dateAdded: "2026-03-01", 
+        clicks: 450, 
+        sales: 85
     },
     { 
         id: 2, 
@@ -34,7 +34,9 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/609453843/playside.png", 
         desc: "Premium replica desk toy. 100% fade pattern with seamless gradient transitions. Includes display stand.",
-        dateAdded: "2026-03-02", clicks: 600, sales: 120 
+        dateAdded: "2026-03-02", 
+        clicks: 600, 
+        sales: 120 
     },
     { 
         id: 3, 
@@ -43,7 +45,9 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632372451/playside.png", 
         desc: "Premium replica desk toy. Factory new look with distinct webbing patterns. Heavy-duty metal construction.",
-        dateAdded: "2026-03-03", clicks: 300, sales: 50
+        dateAdded: "2026-03-03", 
+        clicks: 300, 
+        sales: 50
     },
     { 
         id: 4, 
@@ -52,7 +56,9 @@ const products = [
         oldPrice: 18, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632758204/playside.png", 
         desc: "Premium replica desk toy. Smooth flipping action mechanism with stunning tricolor marble aesthetic.",
-        dateAdded: "2026-03-04", clicks: 800, sales: 200
+        dateAdded: "2026-03-04", 
+        clicks: 800, 
+        sales: 200
     },
     { 
         id: 5, 
@@ -61,7 +67,9 @@ const products = [
         oldPrice: 18, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/616083695/playside.png", 
         desc: "Premium replica desk toy. Golden anodized finish with hand-machined tiger stripes.",
-        dateAdded: "2026-03-05", clicks: 500, sales: 95
+        dateAdded: "2026-03-05", 
+        clicks: 500, 
+        sales: 95
     },
     { 
         id: 6, 
@@ -70,7 +78,9 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631798830/playside.png", 
         desc: "Premium replica desk toy. Ivory-style handle with a beautiful crimson slaughter pattern blade.",
-        dateAdded: "2026-03-06", clicks: 200, sales: 30
+        dateAdded: "2026-03-06", 
+        clicks: 200, 
+        sales: 30
     },
     { 
         id: 7, 
@@ -79,7 +89,9 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/602129942/playside.png", 
         desc: "Premium replica desk toy. Aggressive serrated spine paired with a deep ruby doppler finish.",
-        dateAdded: "2026-03-07", clicks: 350, sales: 60
+        dateAdded: "2026-03-07", 
+        clicks: 350, 
+        sales: 60
     },
     { 
         id: 8, 
@@ -88,7 +100,9 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/625454898/playside.png", 
         desc: "Premium replica desk toy. Sleek, foldable design featuring a full-blade chromatic fade.",
-        dateAdded: "2026-03-08", clicks: 400, sales: 75
+        dateAdded: "2026-03-08", 
+        clicks: 400, 
+        sales: 75
     },
     { 
         id: 9, 
@@ -97,7 +111,9 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632307382/playside.png", 
         desc: "Premium replica desk toy. Dual-wield push daggers with matching marble fade patterns.",
-        dateAdded: "2026-03-09", clicks: 150, sales: 20
+        dateAdded: "2026-03-09", 
+        clicks: 150, 
+        sales: 20
     },
     { 
         id: 10, 
@@ -106,23 +122,25 @@ const products = [
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", 
         desc: "Premium replica desk toy. Massive display piece featuring a mirror-polished tiger tooth blade.",
-        dateAdded: "2026-03-10", clicks: 250, sales: 40
+        dateAdded: "2026-03-10", 
+        clicks: 250, 
+        sales: 40
     }
 ];
 
 // =========================================================================
-// ⚠️ APPLICATION LOGIC (CROSS-PLATFORM SAFE)
+// ⚠️ DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW JAVASCRIPT
 // =========================================================================
 
 const app = {
-    tg: null, // Safe wrapper for Telegram API
+    tg: window.Telegram.WebApp,
     supportUsername: "Chea_Vireak",
     
-    // Core App State
+    // State Data
     searchQuery: "",
     minPrice: 0,
     maxPrice: 1000,
-    isPriceFilterActive: false, // Ensures all items show before slider is touched
+    isPriceFilterActive: false, // Ensures default display shows all items
     cart: [], 
     isPanelOpen: false,
     isLeftPanelOpen: false,
@@ -130,56 +148,46 @@ const app = {
     currentCategory: 'home',
 
     init() {
-        // [1] Safely boot Telegram API without crashing desktop browsers
-        try {
-            this.tg = window.Telegram?.WebApp;
-            this.tg?.expand?.();
-            this.tg?.ready?.();
-        } catch(e) { console.warn("Running outside Telegram environment."); }
+        this.tg.expand();
+        this.tg.ready();
         
-        // [2] Apply limits from Config
-        this.minPrice = Number(STORE_CONFIG.minPriceLimit) || 0;
-        this.maxPrice = Number(STORE_CONFIG.maxPriceLimit) || 1000;
+        this.minPrice = Number(STORE_CONFIG.minPriceRange);
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
         this.isPriceFilterActive = false; 
         
-        // Setup Slider HTML limits dynamically
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
         if(minInput && maxInput) {
-            minInput.min = STORE_CONFIG.minPriceLimit;
-            minInput.max = STORE_CONFIG.maxPriceLimit;
+            minInput.min = STORE_CONFIG.minPriceRange;
+            minInput.max = STORE_CONFIG.maxPriceRange;
             minInput.value = this.minPrice;
             
-            maxInput.min = STORE_CONFIG.minPriceLimit;
-            maxInput.max = STORE_CONFIG.maxPriceLimit;
+            maxInput.min = STORE_CONFIG.minPriceRange;
+            maxInput.max = STORE_CONFIG.maxPriceRange;
             maxInput.value = this.maxPrice;
         }
 
-        // [3] Load Theme Preference securely
-        try {
-            const savedTheme = localStorage.getItem('brickTheme');
-            this.isDarkMode = (savedTheme !== 'light');
-        } catch(e) { this.isDarkMode = true; }
+        const savedTheme = localStorage.getItem('brickTheme');
+        if (savedTheme === 'light') { this.isDarkMode = false; } 
+        else { this.isDarkMode = true; }
         
         this.applyTheme();
         this.updateSliderUI();
-        
-        // Bypass filters on launch to guarantee products display
         this.renderCatalog();
-
-        // Safe Back Button setup
-        try {
-            if (this.tg?.BackButton) {
-                this.tg.BackButton.onClick(() => { this.navigate('home'); });
-            }
-        } catch(e) {}
+        this.setupBackButton();
     },
 
     haptic(style = 'light') {
-        try { this.tg?.HapticFeedback?.impactOccurred?.(style); } catch (e) {}
+        try {
+            // Safe execution: prevents app from crashing on desktop browsers
+            if (this.tg && this.tg.HapticFeedback && this.tg.HapticFeedback.impactOccurred) {
+                this.tg.HapticFeedback.impactOccurred(style);
+            }
+        } catch (e) {
+            console.warn("Haptic feedback not supported on this device.");
+        }
     },
 
-    // --- SLIDING PANELS ANIMATION CONTROLS ---
     togglePanel() { 
         this.haptic('light');
         if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
@@ -252,9 +260,9 @@ const app = {
         const searchInput = document.getElementById('searchInput');
         if (searchInput) searchInput.value = "";
         
-        this.minPrice = Number(STORE_CONFIG.minPriceLimit) || 0;
-        this.maxPrice = Number(STORE_CONFIG.maxPriceLimit) || 1000;
-        this.isPriceFilterActive = false; // Turn filter off safely
+        this.minPrice = Number(STORE_CONFIG.minPriceRange);
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
+        this.isPriceFilterActive = false; // Disables price filter until touched again
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
@@ -265,10 +273,22 @@ const app = {
         this.setCategory('home');
     },
 
+    shareApp() {
+        this.haptic('medium');
+        const shareLink = "https://t.me/BrickStoreApp_bot/Homepage";
+        const shareText = "Check out BRICK STORE for premium CS2 desk toys!";
+        
+        if (this.tg && this.tg.openTelegramLink) {
+            this.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(shareText)}`);
+        } else {
+            alert(`Share this link: ${shareLink}`);
+        }
+    },
+
     toggleTheme() {
         this.haptic('medium');
         this.isDarkMode = !this.isDarkMode;
-        try { localStorage.setItem('brickTheme', this.isDarkMode ? 'dark' : 'light'); } catch(e) {}
+        localStorage.setItem('brickTheme', this.isDarkMode ? 'dark' : 'light');
         this.applyTheme();
     },
 
@@ -277,11 +297,13 @@ const app = {
         if (this.isDarkMode) {
             document.body.classList.add('dark');
             if(knob) { knob.classList.add('translate-x-6'); knob.classList.remove('translate-x-0'); }
-            try { this.tg?.setHeaderColor?.('#000000'); this.tg?.setBackgroundColor?.('#000000'); } catch(e){}
+            if(this.tg && this.tg.setHeaderColor) this.tg.setHeaderColor('#000000');
+            if(this.tg && this.tg.setBackgroundColor) this.tg.setBackgroundColor('#000000');
         } else {
             document.body.classList.remove('dark');
             if(knob) { knob.classList.remove('translate-x-6'); knob.classList.add('translate-x-0'); }
-            try { this.tg?.setHeaderColor?.('#f4f4f5'); this.tg?.setBackgroundColor?.('#f4f4f5'); } catch(e){}
+            if(this.tg && this.tg.setHeaderColor) this.tg.setHeaderColor('#f4f4f5');
+            if(this.tg && this.tg.setBackgroundColor) this.tg.setBackgroundColor('#f4f4f5');
         }
     },
 
@@ -291,7 +313,11 @@ const app = {
         if(this.isPanelOpen) this.togglePanel();
         if(this.isLeftPanelOpen) this.toggleLeftPanel();
         
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.view-section').forEach(el => {
+            if (el.id !== `view-${viewId}`) {
+                el.classList.remove('active');
+            }
+        });
 
         setTimeout(() => {
             const target = document.getElementById(`view-${viewId}`);
@@ -301,13 +327,21 @@ const app = {
         if (viewId === 'home' || viewId === 'cart') {
             document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             document.getElementById('nav-cart').className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
-            try { this.tg?.BackButton?.hide?.(); } catch(e){}
+            if(this.tg && this.tg.BackButton) this.tg.BackButton.hide();
         } else {
-            try { this.tg?.BackButton?.show?.(); } catch(e){}
+            if(this.tg && this.tg.BackButton) this.tg.BackButton.show();
         }
 
         if (viewId === 'cart') { this.renderCart(); }
         window.scrollTo(0, 0);
+    },
+
+    setupBackButton() {
+        if(this.tg && this.tg.BackButton) {
+            this.tg.BackButton.onClick(() => {
+                this.navigate('home');
+            });
+        }
     },
 
     handleSearch(event) {
@@ -315,7 +349,6 @@ const app = {
         this.renderCatalog();
     },
 
-    // --- DUAL-HANDLE RANGE SLIDER LOGIC ---
     handlePriceFilter(type) {
         this.isPriceFilterActive = true;
 
@@ -325,7 +358,6 @@ const app = {
         let minVal = Number(minInput.value);
         let maxVal = Number(maxInput.value);
         
-        // Prevent handles from overlapping/crossing over
         const gap = 1; 
         if (type === 'min') {
             if (minVal > maxVal - gap) {
@@ -356,11 +388,10 @@ const app = {
         if(label) label.innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`;
         
         const track = document.getElementById('slider-track');
-        const rangeTotal = STORE_CONFIG.maxPriceLimit - STORE_CONFIG.minPriceLimit;
+        const rangeTotal = STORE_CONFIG.maxPriceRange - STORE_CONFIG.minPriceRange;
         
-        // Calculate visual fill percentages 
-        const leftPercent = ((this.minPrice - STORE_CONFIG.minPriceLimit) / rangeTotal) * 100;
-        const rightPercent = 100 - (((this.maxPrice - STORE_CONFIG.minPriceLimit) / rangeTotal) * 100);
+        const leftPercent = ((this.minPrice - STORE_CONFIG.minPriceRange) / rangeTotal) * 100;
+        const rightPercent = 100 - (((this.maxPrice - STORE_CONFIG.minPriceRange) / rangeTotal) * 100);
         
         if(track) {
             track.style.left = leftPercent + '%';
@@ -368,17 +399,14 @@ const app = {
         }
     },
 
-    // --- CART & CHECKOUT LOGIC ---
     addToCart(id) {
         this.haptic('medium');
         const product = products.find(p => p.id === id);
         if (product) {
             this.cart.push(product);
-            try {
-                if (this.tg?.showPopup) {
-                    this.tg.showPopup({ title: "Added to Cart", message: `${product.name} is now in your cart.`, buttons: [{type: "ok"}] });
-                } else { alert(`Added ${product.name} to your cart!`); }
-            } catch(e) { alert(`Added ${product.name} to your cart!`); }
+            if (this.tg && this.tg.showPopup) {
+                this.tg.showPopup({ title: "Added to Cart", message: `${product.name} is now in your cart.`, buttons: [{type: "ok"}] });
+            } else { alert(`Added ${product.name} to your cart!`); }
             this.updateCartBadge();
         }
     },
@@ -406,67 +434,63 @@ const app = {
         
         if (productId) {
             const product = products.find(p => p.id === productId);
-            if (product) { 
-                message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${Number(product.price).toFixed(2)}\n[image]`; 
-            }
+            if (product) { message = `Hello, I would like to order this product:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]`; }
         } else if (this.cart.length > 0) {
             message = "Hello, I would like to order these products:\n\n";
             let total = 0;
             this.cart.forEach((product, index) => {
-                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${Number(product.price).toFixed(2)}\n[image]\n\n`;
-                total += Number(product.price);
+                message += `Item ${index + 1}:\nProduct Name: ${product.name}\nPrice: $${product.price.toFixed(2)}\n[image]\n\n`;
+                total += product.price;
             });
             message += `Total Price: $${total.toFixed(2)}`;
         }
         
         if (message !== "") {
             const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
-            try {
-                if(this.tg?.openTelegramLink) { this.tg.openTelegramLink(url); }
-                else { window.open(url, '_blank'); }
-            } catch(e) { window.open(url, '_blank'); }
+            if(this.tg && this.tg.openTelegramLink) {
+                this.tg.openTelegramLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
         }
     },
 
-    // =========================================================================
-    // 🖥️ UI RENDERING ENGINES
-    // =========================================================================
     renderCatalog() {
         const grid = document.getElementById('product-grid');
         let displayProducts = [...products];
 
-        // 1. Process category limits
         if (this.currentCategory === 'new') {
             displayProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxNewArrivals);
-        } else if (this.currentCategory === 'trending') {
+        } 
+        else if (this.currentCategory === 'trending') {
             displayProducts.sort((a, b) => b.clicks - a.clicks);
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxTrending);
-        } else if (this.currentCategory === 'deal') {
+        }
+        else if (this.currentCategory === 'deal') {
             displayProducts.sort((a, b) => Number(a.price) - Number(b.price));
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestDeals);
-        } else if (this.currentCategory === 'selling') {
+        }
+        else if (this.currentCategory === 'selling') {
             displayProducts.sort((a, b) => b.sales - a.sales);
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestSelling);
         }
 
-        // 2. Perform Real-time Filtering
-        let filteredProducts = displayProducts.filter(product => {
+        displayProducts = displayProducts.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
-            let matchesPrice = true;
             
-            // Execute numeric filter logic only if active
+            let matchesPrice = true;
             if (this.isPriceFilterActive) {
                 const itemPrice = Number(product.price);
                 const minP = Number(this.minPrice);
                 const maxP = Number(this.maxPrice);
                 matchesPrice = (itemPrice >= minP) && (itemPrice <= maxP);
             }
+
             return matchesSearch && matchesPrice;
         });
 
-        // 3. Fallback Mechanism (Restores all items if filter hides everything)
-        if (filteredProducts.length === 0) {
+        if (displayProducts.length === 0) {
             grid.innerHTML = `
                 <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
                     <span class="text-4xl mb-4 opacity-50 grayscale filter">🔍</span>
@@ -479,11 +503,10 @@ const app = {
             return;
         }
 
-        // 4. Render Layout
-        grid.innerHTML = filteredProducts.map(product => `
+        grid.innerHTML = displayProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
-                    <img src="${product.image}" alt="${product.name}" loading="lazy" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
                 </div>
                 <div class="p-3 flex-1 flex flex-col justify-between border-t border-premiumBorder bg-premiumCard">
                     <div>
