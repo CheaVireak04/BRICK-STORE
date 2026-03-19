@@ -133,14 +133,13 @@ const products = [
 // =========================================================================
 
 const app = {
-    tg: window.Telegram.WebApp,
+    tg: null,
     supportUsername: "Chea_Vireak",
     
-    // State Data
     searchQuery: "",
     minPrice: 0,
     maxPrice: 1000,
-    isPriceFilterActive: false, // FIX: Determines if slider was touched
+    isPriceFilterActive: false, // Prevents filtering on initial load
     cart: [], 
     isPanelOpen: false,
     isLeftPanelOpen: false,
@@ -148,42 +147,54 @@ const app = {
     currentCategory: 'home',
 
     init() {
-        this.tg.expand();
-        this.tg.ready();
+        // Bulletproof initialization that prevents crashes
+        try {
+            this.tg = window.Telegram?.WebApp;
+            this.tg?.expand?.();
+            this.tg?.ready?.();
+        } catch(e) {
+            console.warn("Telegram WebApp API not found or failed:", e);
+        }
         
-        // Initialize Default Variables
-        this.minPrice = Number(STORE_CONFIG.minPriceRange);
-        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
-        this.isPriceFilterActive = false; // Do not apply filters on page load
+        // Use Strict Numbers for filtering
+        this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
+        this.isPriceFilterActive = false; 
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
         if(minInput && maxInput) {
-            minInput.min = STORE_CONFIG.minPriceRange;
-            minInput.max = STORE_CONFIG.maxPriceRange;
             minInput.value = this.minPrice;
-            
-            maxInput.min = STORE_CONFIG.minPriceRange;
-            maxInput.max = STORE_CONFIG.maxPriceRange;
             maxInput.value = this.maxPrice;
         }
 
-        const savedTheme = localStorage.getItem('brickTheme');
-        if (savedTheme === 'light') { this.isDarkMode = false; } 
-        else { this.isDarkMode = true; }
+        // Bulletproof Local Storage checking
+        try {
+            const savedTheme = localStorage.getItem('brickTheme');
+            if (savedTheme === 'light') { this.isDarkMode = false; } 
+            else { this.isDarkMode = true; }
+        } catch(e) {
+            console.warn("Local storage disabled:", e);
+            this.isDarkMode = true;
+        }
         
         this.applyTheme();
         this.updateSliderUI();
-        
-        // Load initial products (bypassing filters completely)
         this.renderCatalog();
-        this.setupBackButton();
+        
+        try {
+            if (this.tg?.BackButton) {
+                this.tg.BackButton.onClick(() => { this.navigate('home'); });
+            }
+        } catch(e) {}
     },
 
     haptic(style = 'light') {
-        if (this.tg.HapticFeedback) {
-            this.tg.HapticFeedback.impactOccurred(style);
-        }
+        try {
+            if (this.tg?.HapticFeedback?.impactOccurred) {
+                this.tg.HapticFeedback.impactOccurred(style);
+            }
+        } catch (e) {}
     },
 
     togglePanel() { 
@@ -229,8 +240,6 @@ const app = {
     setCategory(category) {
         this.haptic('medium');
         this.currentCategory = category;
-        this.searchQuery = ""; 
-        document.getElementById('searchInput').value = "";
         
         if(this.isLeftPanelOpen) this.toggleLeftPanel();
         
@@ -252,21 +261,44 @@ const app = {
         this.renderCatalog();
     },
 
+    resetFilters() {
+        this.haptic('medium');
+        this.searchQuery = "";
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = "";
+        
+        this.minPrice = Number(STORE_CONFIG.minPriceRange) || 0;
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange) || 1000;
+        this.isPriceFilterActive = false; // Turn filter off
+        
+        const minInput = document.getElementById('minPriceRange');
+        const maxInput = document.getElementById('maxPriceRange');
+        if (minInput) minInput.value = this.minPrice;
+        if (maxInput) maxInput.value = this.maxPrice;
+        
+        this.updateSliderUI();
+        this.setCategory('home');
+    },
+
     shareApp() {
         this.haptic('medium');
         const shareLink = "https://t.me/BrickStoreApp_bot/Homepage";
         const shareText = "Check out BRICK STORE for premium CS2 desk toys!";
-        if (this.tg.openTelegramLink) {
-            this.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(shareText)}`);
-        } else {
-            alert(`Share this link: ${shareLink}`);
+        try {
+            if (this.tg?.openTelegramLink) {
+                this.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(shareText)}`);
+            } else {
+                alert(`Share this link: ${shareLink}`);
+            }
+        } catch(e) {
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(shareText)}`, '_blank');
         }
     },
 
     toggleTheme() {
         this.haptic('medium');
         this.isDarkMode = !this.isDarkMode;
-        localStorage.setItem('brickTheme', this.isDarkMode ? 'dark' : 'light');
+        try { localStorage.setItem('brickTheme', this.isDarkMode ? 'dark' : 'light'); } catch(e) {}
         this.applyTheme();
     },
 
@@ -275,13 +307,11 @@ const app = {
         if (this.isDarkMode) {
             document.body.classList.add('dark');
             if(knob) { knob.classList.add('translate-x-6'); knob.classList.remove('translate-x-0'); }
-            this.tg.setHeaderColor('#000000');
-            this.tg.setBackgroundColor('#000000');
+            try { this.tg?.setHeaderColor?.('#000000'); this.tg?.setBackgroundColor?.('#000000'); } catch(e){}
         } else {
             document.body.classList.remove('dark');
             if(knob) { knob.classList.remove('translate-x-6'); knob.classList.add('translate-x-0'); }
-            this.tg.setHeaderColor('#f4f4f5');
-            this.tg.setBackgroundColor('#f4f4f5');
+            try { this.tg?.setHeaderColor?.('#f4f4f5'); this.tg?.setBackgroundColor?.('#f4f4f5'); } catch(e){}
         }
     },
 
@@ -305,19 +335,13 @@ const app = {
         if (viewId === 'home' || viewId === 'cart') {
             document.getElementById('nav-home').className = `flex flex-col items-center transition-colors ${viewId === 'home' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
             document.getElementById('nav-cart').className = `flex flex-col items-center transition-colors relative ${viewId === 'cart' ? 'text-premiumWhite' : 'text-premiumGray hover:text-premiumWhite'}`;
-            this.tg.BackButton.hide();
+            try { this.tg?.BackButton?.hide?.(); } catch(e){}
         } else {
-            this.tg.BackButton.show();
+            try { this.tg?.BackButton?.show?.(); } catch(e){}
         }
 
         if (viewId === 'cart') { this.renderCart(); }
         window.scrollTo(0, 0);
-    },
-
-    setupBackButton() {
-        this.tg.BackButton.onClick(() => {
-            this.navigate('home');
-        });
     },
 
     handleSearch(event) {
@@ -326,8 +350,8 @@ const app = {
     },
 
     handlePriceFilter(type) {
-        // FIX: The user has touched the slider, enable filtering
-        this.isPriceFilterActive = true; 
+        // User touched slider, filter activates!
+        this.isPriceFilterActive = true;
 
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
@@ -381,9 +405,11 @@ const app = {
         const product = products.find(p => p.id === id);
         if (product) {
             this.cart.push(product);
-            if (this.tg.showPopup) {
-                this.tg.showPopup({ title: "Added to Cart", message: `${product.name} is now in your cart.`, buttons: [{type: "ok"}] });
-            } else { alert(`Added ${product.name} to your cart!`); }
+            try {
+                if (this.tg?.showPopup) {
+                    this.tg.showPopup({ title: "Added to Cart", message: `${product.name} is now in your cart.`, buttons: [{type: "ok"}] });
+                } else { alert(`Added ${product.name} to your cart!`); }
+            } catch(e) { alert(`Added ${product.name} to your cart!`); }
             this.updateCartBadge();
         }
     },
@@ -426,16 +452,18 @@ const app = {
         
         if (message !== "") {
             const url = `https://t.me/${this.supportUsername}?text=${encodeURIComponent(message)}`;
-            this.tg.openTelegramLink(url);
+            try {
+                if(this.tg?.openTelegramLink) { this.tg.openTelegramLink(url); }
+                else { window.open(url, '_blank'); }
+            } catch(e) { window.open(url, '_blank'); }
         }
     },
 
     // renderCatalog() {
         const grid = document.getElementById('product-grid');
-        
-        // 1. Establish the base products based on the category chosen
         let displayProducts = [...products];
 
+        // 1. Process category limits
         if (this.currentCategory === 'new') {
             displayProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxNewArrivals);
@@ -453,35 +481,43 @@ const app = {
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestSelling);
         }
 
-        // 2. Filter Logic
+        // 2. Perform the exact filtering requested
         let filteredProducts = displayProducts.filter(product => {
-            // Apply Search filter
             const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
             
-            // Apply Price Filter (ONLY if user touched the slider)
             let matchesPrice = true;
+            
+            // Only apply price filtering if the user actually used the slider
             if (this.isPriceFilterActive) {
                 const itemPrice = Number(product.price);
                 const minP = Number(this.minPrice);
                 const maxP = Number(this.maxPrice);
                 
-                // INCLUSIVE LOGIC ( >= and <= )
-                matchesPrice = itemPrice >= minP && itemPrice <= maxP;
+                // Inclusive logic
+                matchesPrice = (itemPrice >= minP) && (itemPrice <= maxP);
                 
-                // Debugging to console to verify math correctness
-                console.log(`[DEBUG] Check: ${product.name} | Price: ${itemPrice} | Range: ${minP}-${maxP} | Fits Range: ${matchesPrice}`);
+                // Console debugging as requested
+                console.log(`[DEBUG] Check: ${product.name} | Price: $${itemPrice} | Range: $${minP}-$${maxP} | Fits Filter: ${matchesPrice}`);
             }
 
             return matchesSearch && matchesPrice;
         });
 
-        // 3. Fallback Mechanism
+        // 3. Fallback Mechanism (Restores all items if filter hides everything)
         if (filteredProducts.length === 0) {
-            console.log("[DEBUG] No items matched the filter! Triggering fallback to display all category items.");
-            filteredProducts = displayProducts; // Restores all products for this view
+            console.log("[DEBUG] Filter resulted in 0 items. Triggering Fallback UI.");
+            grid.innerHTML = `
+                <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
+                    <span class="text-4xl mb-4 opacity-50 grayscale filter">🔍</span>
+                    <p class="text-premiumGray text-sm mb-5 px-4 leading-relaxed">No items matched your search or price filter.</p>
+                    <a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase tracking-widest text-xs underline underline-offset-4 active:scale-95 transition-transform hover:text-gray-300">
+                        Go back to homepage
+                    </a>
+                </div>
+            `;
+            return;
         }
 
-        // 4. Render to DOM
         grid.innerHTML = filteredProducts.map(product => `
             <div onclick="app.viewProduct(${product.id})" class="bg-premiumCard border border-premiumBorder rounded-xl overflow-hidden active:scale-95 transition-transform cursor-pointer flex flex-col shadow-sm hover:shadow-lg">
                 <div class="w-full aspect-square bg-[#0a0a0a] flex items-center justify-center relative p-2">
