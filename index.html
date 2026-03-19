@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRICK STORE | UNIFIED V5.1</title>
+    <title>BRICK STORE | FINAL V5.2</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY" async defer></script>
 
     <style>
         :root { --bg-main: #f4f4f5; --bg-sec: #ffffff; --bg-card: #e5e5e5; --border: #d4d4d8; --text-main: #000000; --text-sec: #52525b; }
@@ -77,7 +75,6 @@
                     <img src="./hero-banner.jpg" alt="CS2 Premium Knives" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/20"></div>
                     <div class="relative z-10 text-center px-4">
-                        <span class="bg-blue-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-sm mb-2 inline-block shadow-md">UNIFIED V5.1</span>
                         <h2 class="text-3xl font-black uppercase tracking-widest mb-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">CS2 DESK TOYS</h2>
                         <p class="text-[10px] text-white font-bold uppercase tracking-widest leading-relaxed mt-2 drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Limited-style CS2 knife replicas crafted for collectors.</p>
                     </div>
@@ -135,29 +132,15 @@
                     <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Delivery Option <span class="text-red-500">*</span></label>
                     <select id="modal-delivery" onchange="app.handleDeliveryChange()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl outline-none appearance-none cursor-pointer truncate">
                             <option value="" disabled selected>Please select a delivery method</option>
-                            <option value="Standard Delivery (1-2 days)">Standard (1–2 days)</option>
-                            <option value="GrabExpress (Phnom Penh)">Grab Express (Phnom Penh)</option>
+                            <option value="Standard Delivery (1-2 days)">Standard Delivery (1–2 days)</option>
+                            <option value="GrabExpress (Phnom Penh)">GrabExpress – Only in Phnom Penh</option>
                             <option value="Store Pickup">Store Pickup</option>
                     </select>
                     <p id="delivery-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please select a delivery method</p>
                 </div>
 
                 <div id="grab-fields" class="hidden space-y-4 p-4 bg-premiumBlack rounded-xl border border-premiumBorder">
-                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Pin Your Location <span class="text-red-500">*</span></label>
-                    <button onclick="app.getGrabLocation()" id="btn-get-location" class="w-full bg-premiumCard border border-premiumBorder hover:bg-premiumBorder text-premiumWhite text-sm font-bold p-3 rounded-xl transition-colors flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        Get Current Location
-                    </button>
-                    
-                    <div id="map-container" class="w-full h-48 rounded-xl overflow-hidden hidden relative border border-premiumBorder">
-                        <div id="google-map" class="w-full h-full bg-premiumCard flex items-center justify-center text-premiumGray text-xs text-center p-4">Loading Map...</div>
-                    </div>
-                    
-                    <p id="map-coords" class="text-[10px] text-blue-400 hidden text-center font-mono"></p>
-                    <p id="map-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Please pin your location</p>
-                    <button id="btn-confirm-location" onclick="app.confirmGrabLocation()" class="w-full bg-blue-600 text-white font-bold text-xs py-3 rounded-xl hidden transition-colors">Confirm Marker Location</button>
-
-                    <div class="mt-4 border-t border-premiumBorder pt-4">
+                    <div>
                         <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Phone Number <span class="text-red-500">*</span></label>
                         <input type="tel" id="grab-phone" placeholder="012 345 678" oninput="app.clearGrabPhoneError()" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none placeholder-premiumGray">
                         <p id="grab-phone-error" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden tracking-wider">⚠️ Phone number is required</p>
@@ -184,15 +167,16 @@
                         <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Select City/Province <span class="text-red-500">*</span></label>
                         <select id="modal-province" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-3 rounded-xl outline-none appearance-none cursor-pointer truncate">
                             <option value="Phnom Penh">Phnom Penh</option>
-                            <option value="Banteay Meanchey">Banteay Meanchey</option>
+                            <option value="Banteay Meanchey - Krong Serei Saophoan">Krong Serei Saophoan - Banteay Meanchey</option>
+                            <option value="Banteay Meanchey - Poipet">Poipet - Banteay Meanchey</option>
                             <option value="Battambang">Battambang</option>
                             <option value="Kampong Cham">Kampong Cham</option>
                             <option value="Kampong Chhnang">Kampong Chhnang</option>
                             <option value="Kampong Speu">Kampong Speu</option>
                             <option value="Kampong Thom">Kampong Thom</option>
-                            <option value="Kampot">Kampot</option>
+                            <option value="Kampot - Krong Kampot">Krong Kampot - Kampot</option>
                             <option value="Kandal">Kandal</option>
-                            <option value="Kep">Kep</option>
+                            <option value="Kep - Krong Kep">Krong Kep - Kep</option>
                             <option value="Koh Kong">Koh Kong</option>
                             <option value="Kratie">Kratie</option>
                             <option value="Mondulkiri">Mondulkiri</option>
@@ -222,7 +206,7 @@
                 </div>
 
                 <div>
-                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Note to Seller</label>
+                    <label class="text-[10px] text-premiumGray uppercase font-bold tracking-widest block mb-2">Note to Seller (Optional)</label>
                     <textarea id="modal-note" placeholder="Any special requests?" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite text-sm p-4 rounded-xl h-20 resize-none outline-none placeholder-premiumGray"></textarea>
                 </div>
             </div>
@@ -317,23 +301,10 @@
             { id: 10, name: "Bowie Knife Tiger Tooth", price: 12, oldPrice: 15, image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png", gallery: ["https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/632900583/playside.png"], desc: "Premium replica desk toy. Massive display piece.", dateAdded: "2026-03-10", clicks: 250, sales: 40 }
         ];
 
-        // GOOGLE MAPS API FAILURE BYPASS
-        window.gm_authFailure = function() {
-            const mapDiv = document.getElementById('google-map');
-            if(mapDiv) {
-                mapDiv.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full w-full bg-red-500/10 rounded-xl">
-                        <span class="text-red-500 font-black text-xs uppercase mb-1">Map Key Required</span>
-                        <span class="text-premiumGray text-[9px] px-2 leading-tight">Replace "YOUR_GOOGLE_MAPS_API_KEY" in the HTML to view the map.</span>
-                        <span class="text-blue-400 font-mono text-[10px] mt-2">Location Saved: ${app.mapLat.toFixed(4)}, ${app.mapLng.toFixed(4)}</span>
-                    </div>`;
-            }
-        };
-
         const app = {
             tg: null, supportUsername: "Chea_Vireak", searchQuery: "", minPrice: 0, maxPrice: 1000, isPriceFilterActive: false,
             cart: [], isPanelOpen: false, isLeftPanelOpen: false, isDarkMode: true, currentCategory: 'home', pendingOrderProductId: null,
-            selectedCompany: null, mapLat: null, mapLng: null, isLocationConfirmed: false, googleMap: null, mapMarker: null,
+            selectedCompany: null,
 
             init() {
                 try { this.tg = window.Telegram?.WebApp; this.tg?.expand?.(); this.tg?.ready?.(); } catch(e) {}
@@ -399,11 +370,10 @@
             },
 
             openOrderSummary(productId = null) {
-                this.haptic('medium'); this.pendingOrderProductId = productId; this.isLocationConfirmed = false; this.selectedCompany = null;
+                this.haptic('medium'); this.pendingOrderProductId = productId; this.selectedCompany = null;
                 
                 const dError = document.getElementById('delivery-error'); if(dError) dError.classList.add('hidden');
                 const pError = document.getElementById('phone-error'); if(pError) pError.classList.add('hidden');
-                const mError = document.getElementById('map-error'); if(mError) mError.classList.add('hidden');
                 const gpError = document.getElementById('grab-phone-error'); if(gpError) gpError.classList.add('hidden');
                 const cError = document.getElementById('company-error'); if(cError) cError.classList.add('hidden');
                 
@@ -429,23 +399,6 @@
 
             selectCompany(companyName) { this.haptic('light'); this.selectedCompany = companyName; document.getElementById('company-error').classList.add('hidden'); document.querySelectorAll('.company-box').forEach(box => { box.classList.remove('selected'); }); if(companyName === 'VET') document.getElementById('company-vet').classList.add('selected'); if(companyName === 'J&T') document.getElementById('company-jnt').classList.add('selected'); if(companyName === 'Capitol') document.getElementById('company-capitol').classList.add('selected'); },
 
-            getGrabLocation() {
-                this.haptic('medium'); const b = document.getElementById('btn-get-location'); b.innerText = "📍 Locating...";
-                if (!navigator.geolocation) { alert("Geolocation not supported."); b.innerText = "📍 Get Current Location"; return; }
-                navigator.geolocation.getCurrentPosition((pos) => { this.mapLat = pos.coords.latitude; this.mapLng = pos.coords.longitude; b.style.display = "none"; this.initGoogleMap(this.mapLat, this.mapLng); }, () => { alert("Failed to get location."); b.innerText = "📍 Try Again"; });
-            },
-
-            initGoogleMap(lat, lng) {
-                const container = document.getElementById('map-container'); const div = document.getElementById('google-map'); const confirm = document.getElementById('btn-confirm-location');
-                container.classList.remove('hidden');
-                if (typeof google === 'undefined' || typeof google.maps === 'undefined') { window.gm_authFailure(); confirm.classList.remove('hidden'); return; }
-                const center = { lat, lng }; this.googleMap = new google.maps.Map(div, { center, zoom: 16, disableDefaultUI: true, zoomControl: true });
-                this.mapMarker = new google.maps.Marker({ position: center, map: this.googleMap, draggable: true });
-                this.mapMarker.addListener('dragend', (e) => { this.mapLat = e.latLng.lat(); this.mapLng = e.latLng.lng(); this.isLocationConfirmed = false; confirm.innerText = "Confirm Marker Location"; confirm.classList.replace('bg-green-500', 'bg-blue-600'); });
-                confirm.classList.remove('hidden');
-            },
-
-            confirmGrabLocation() { this.haptic('medium'); this.isLocationConfirmed = true; document.getElementById('map-error').classList.add('hidden'); const c = document.getElementById('btn-confirm-location'); c.innerText = "✅ Location Confirmed"; c.classList.replace('bg-blue-600', 'bg-green-500'); document.getElementById('map-coords').innerText = `${this.mapLat.toFixed(5)}, ${this.mapLng.toFixed(5)}`; document.getElementById('map-coords').classList.remove('hidden'); },
             clearPhoneError() { document.getElementById('phone-error').classList.add('hidden'); },
             clearGrabPhoneError() { document.getElementById('grab-phone-error').classList.add('hidden'); },
 
@@ -453,16 +406,15 @@
                 this.haptic('medium'); let valid = true; const d = document.getElementById('modal-delivery').value;
                 if (!d) { document.getElementById('delivery-error').classList.remove('hidden'); valid = false; }
                 if (d.includes('Standard')) { if (!this.selectedCompany) { document.getElementById('company-error').classList.remove('hidden'); valid = false; } if (!document.getElementById('modal-phone').value.trim()) { document.getElementById('phone-error').classList.remove('hidden'); valid = false; } }
-                if (d.includes('Grab')) { if (!this.isLocationConfirmed) { document.getElementById('map-error').classList.remove('hidden'); valid = false; } if (!document.getElementById('grab-phone').value.trim()) { document.getElementById('grab-phone-error').classList.remove('hidden'); valid = false; } }
+                if (d.includes('Grab')) { if (!document.getElementById('grab-phone').value.trim()) { document.getElementById('grab-phone-error').classList.remove('hidden'); valid = false; } }
                 if (!valid) return;
 
                 let items = []; let total = 0; if (this.pendingOrderProductId) { const p = products.find(i => i.id === this.pendingOrderProductId); if(p) { items.push(p); total = p.price; } } else { items = [...this.cart]; items.forEach(i => total += i.price); }
                 let msg = `🛒 NEW ORDER\nMethod: ${d}\n`;
                 if (d.includes('Standard')) msg += `Company: ${this.selectedCompany}\nProvince: ${document.getElementById('modal-province').value}\nAddress: ${document.getElementById('modal-address').value || 'N/A'}\nPhone: ${document.getElementById('modal-phone').value}\n`;
-                if (d.includes('Grab')) msg += `Phone: ${document.getElementById('grab-phone').value}\nMap: http://google.com/maps?q=$${this.mapLat},${this.mapLng}\n`;
+                if (d.includes('Grab')) msg += `Phone: ${document.getElementById('grab-phone').value}\n`;
                 msg += `Note: ${document.getElementById('modal-note').value || 'None'}\n\nItems:\n` + items.map((i, idx) => `${idx+1}. ${i.name} ($${i.price})`).join('\n') + `\nTotal: $${total.toFixed(2)}`;
                 
-                // TELEGRAM API CHECK - Safely fall back to URL open if not in Telegram App
                 const inTelegram = this.tg && this.tg.initDataUnsafe && Object.keys(this.tg.initDataUnsafe).length > 0;
                 if (inTelegram && this.tg.sendData) {
                     this.tg.sendData(JSON.stringify({ method: d, items: items, total: total }));
