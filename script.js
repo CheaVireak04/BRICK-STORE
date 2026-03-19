@@ -2,10 +2,10 @@
 // ⚙️ APP SETTINGS (CHANGE NUMBER OF ITEMS DISPLAYED HERE)
 // =========================================================================
 const STORE_CONFIG = {
-    maxNewArrivals: 4,    // Shows the 4 newest items based on 'dateAdded'
-    maxTrending: 4,       // Shows the 4 items with the most 'clicks'
-    maxBestDeals: 4,      // Shows the 4 cheapest items
-    maxBestSelling: 4,    // Shows the 4 items with the most 'sales'
+    maxNewArrivals: 4,    
+    maxTrending: 4,       
+    maxBestDeals: 4,      
+    maxBestSelling: 4,    
     
     // minPriceRange: 0,
     // maxPriceRange: 1000
@@ -14,18 +14,15 @@ const STORE_CONFIG = {
 // =========================================================================
 // 🛒 PRODUCT DATA (ADD NEW PRODUCTS & EDIT PRICES HERE)
 // =========================================================================
-// To add a new product, just copy an existing block and change the details.
-// Make sure every product has a unique 'id' number!
 
 const products = [
     { 
         id: 1, 
         name: "Karambit Doppler", 
-        price: 12, 
+        // price: 12, 
         oldPrice: 15, 
         image: "https://cdn.skinport.com/cdn-cgi/image/width=512,height=384,fit=pad,format=avif,quality=85,background=transparent/images/screenshots/631286982/playside.png", 
         desc: "Premium replica desk toy. Deep sapphire phases with a flawless glossy finish. Includes display stand.",
-        // Variables for Categories (Change these numbers to change rankings)
         dateAdded: "2026-03-01", 
         clicks: 450, 
         sales: 85
@@ -139,7 +136,6 @@ const app = {
     tg: window.Telegram.WebApp,
     supportUsername: "Chea_Vireak",
     
-    // State Data
     searchQuery: "",
     minPrice: 0,
     maxPrice: 1000,
@@ -153,9 +149,9 @@ const app = {
         this.tg.expand();
         this.tg.ready();
         
-        // Initialize Config Values for Dual Slider
-        this.minPrice = STORE_CONFIG.minPriceRange;
-        this.maxPrice = STORE_CONFIG.maxPriceRange;
+        // Force default values to be strict Math Numbers
+        this.minPrice = Number(STORE_CONFIG.minPriceRange);
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
         
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
@@ -186,9 +182,9 @@ const app = {
     },
 
     // --- PANELS & MENUS ---
-    togglePanel() { // Right Panel (About)
+    togglePanel() { 
         this.haptic('light');
-        if(this.isLeftPanelOpen) this.toggleLeftPanel(); // Close other panel if open
+        if(this.isLeftPanelOpen) this.toggleLeftPanel(); 
         this.isPanelOpen = !this.isPanelOpen;
         const panel = document.getElementById('side-panel');
         const overlay = document.getElementById('panel-overlay');
@@ -206,9 +202,9 @@ const app = {
         }
     },
 
-    toggleLeftPanel() { // Left Panel (Categories)
+    toggleLeftPanel() { 
         this.haptic('light');
-        if(this.isPanelOpen) this.togglePanel(); // Close other panel if open
+        if(this.isPanelOpen) this.togglePanel(); 
         this.isLeftPanelOpen = !this.isLeftPanelOpen;
         const panel = document.getElementById('left-panel');
         const overlay = document.getElementById('left-panel-overlay');
@@ -226,19 +222,15 @@ const app = {
         }
     },
 
-    // --- CATEGORY FILTERING ---
     setCategory(category) {
         this.haptic('medium');
         this.currentCategory = category;
-        this.searchQuery = ""; // Clear search on category change
-        document.getElementById('searchInput').value = "";
         
         if(this.isLeftPanelOpen) this.toggleLeftPanel();
         
         const titleElement = document.getElementById('category-title');
         const heroBanner = document.getElementById('hero-banner-container');
         
-        // Show/Hide Banner based on category
         if(category === 'home') {
             heroBanner.classList.remove('hidden');
             titleElement.innerText = "Featured Knives";
@@ -250,17 +242,33 @@ const app = {
             if(category === 'selling') titleElement.innerText = "Best Selling";
         }
 
-        this.navigate('home'); // Ensure we are on the home screen
+        this.navigate('home'); 
         this.renderCatalog();
     },
 
-    // --- SHARE APP ---
+    // A fully functional reset for the "Go back to homepage" button
+    resetFilters() {
+        this.haptic('medium');
+        this.searchQuery = "";
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = "";
+        
+        this.minPrice = Number(STORE_CONFIG.minPriceRange);
+        this.maxPrice = Number(STORE_CONFIG.maxPriceRange);
+        
+        const minInput = document.getElementById('minPriceRange');
+        const maxInput = document.getElementById('maxPriceRange');
+        if (minInput) minInput.value = this.minPrice;
+        if (maxInput) maxInput.value = this.maxPrice;
+        
+        this.updateSliderUI();
+        this.setCategory('home');
+    },
+
     shareApp() {
         this.haptic('medium');
         const shareLink = "https://t.me/BrickStoreApp_bot/Homepage";
         const shareText = "Check out BRICK STORE for premium CS2 desk toys!";
-        
-        // Use native Telegram sharing if available
         if (this.tg.openTelegramLink) {
             this.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(shareText)}`);
         } else {
@@ -268,7 +276,6 @@ const app = {
         }
     },
 
-    // --- THEME ---
     toggleTheme() {
         this.haptic('medium');
         this.isDarkMode = !this.isDarkMode;
@@ -291,7 +298,6 @@ const app = {
         }
     },
 
-    // --- NAVIGATION ---
     navigate(viewId) {
         this.haptic('light');
         
@@ -304,7 +310,6 @@ const app = {
             }
         });
 
-        // Small delay ensures smooth transition
         setTimeout(() => {
             const target = document.getElementById(`view-${viewId}`);
             target.classList.add('active');
@@ -333,15 +338,14 @@ const app = {
         this.renderCatalog();
     },
 
-    // --- NEW: DUAL PRICE FILTER LOGIC ---
     handlePriceFilter(type) {
         const minInput = document.getElementById('minPriceRange');
         const maxInput = document.getElementById('maxPriceRange');
         
-        let minVal = parseInt(minInput.value);
-        let maxVal = parseInt(maxInput.value);
+        // Force reading slider values as strict numbers
+        let minVal = Number(minInput.value);
+        let maxVal = Number(maxInput.value);
         
-        // Prevent handles from crossing each other
         const gap = 1;
         if (type === 'min' && minVal > maxVal - gap) {
             minVal = maxVal - gap;
@@ -361,7 +365,6 @@ const app = {
 
     updateSliderUI() {
         document.getElementById('priceValue').innerText = `$${this.minPrice.toFixed(2)} — $${this.maxPrice.toFixed(2)}`;
-        
         const track = document.getElementById('slider-track');
         const rangeTotal = STORE_CONFIG.maxPriceRange - STORE_CONFIG.minPriceRange;
         
@@ -374,7 +377,6 @@ const app = {
         }
     },
 
-    // --- CART LOGIC ---
     addToCart(id) {
         this.haptic('medium');
         const product = products.find(p => p.id === id);
@@ -427,14 +429,10 @@ const app = {
         }
     },
 
-    // --- RENDERING VIEWS ---
     renderCatalog() {
         const grid = document.getElementById('product-grid');
-        
-        // 1. First, copy the array so we don't destroy the original data
         let displayProducts = [...products];
 
-        // 2. Apply Category Sorting & Limits
         if (this.currentCategory === 'new') {
             displayProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxNewArrivals);
@@ -444,7 +442,6 @@ const app = {
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxTrending);
         }
         else if (this.currentCategory === 'deal') {
-            // Sorts by lowest price
             displayProducts.sort((a, b) => a.price - b.price);
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestDeals);
         }
@@ -453,16 +450,31 @@ const app = {
             displayProducts = displayProducts.slice(0, STORE_CONFIG.maxBestSelling);
         }
 
-        // 3. NEW: Apply Dual Price Filters
-        displayProducts = displayProducts.filter(product => {
+        // displayProducts = displayProducts.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(this.searchQuery);
-            const matchesPrice = product.price >= this.minPrice && product.price <= this.maxPrice;
+            
+            // Force strict numeric comparison
+            const itemPrice = Number(product.price);
+            const minP = Number(this.minPrice);
+            const maxP = Number(this.maxPrice);
+            
+            // Inclusive range filter
+            const matchesPrice = itemPrice >= minP && itemPrice <= maxP;
+            
             return matchesSearch && matchesPrice;
         });
 
-        // 4. Render to Screen
+        // Debug Safety / Fallback Display
         if (displayProducts.length === 0) {
-            grid.innerHTML = `<div class="col-span-2 text-center py-10 text-premiumGray text-sm">No items found matching your criteria.</div>`;
+            grid.innerHTML = `
+                <div class="col-span-2 flex flex-col items-center justify-center py-12 text-center">
+                    <span class="text-4xl mb-4 opacity-50 grayscale">🔍</span>
+                    <p class="text-premiumGray text-sm mb-5 px-4 leading-relaxed">No items matched your search or price filter.</p>
+                    <a href="#" onclick="app.resetFilters(); return false;" class="text-premiumWhite font-bold uppercase tracking-widest text-xs underline underline-offset-4 active:scale-95 transition-transform hover:text-gray-300">
+                        Go back to homepage
+                    </a>
+                </div>
+            `;
             return;
         }
 
@@ -475,7 +487,6 @@ const app = {
                     <div>
                         <h4 class="font-bold text-xs uppercase tracking-wider mb-1 leading-tight text-premiumWhite">${product.name}</h4>
                     </div>
-                    
                     <div class="mt-3 flex justify-between items-center">
                         <div class="flex items-baseline gap-2">
                             <span class="text-premiumWhite font-black text-sm tracking-widest">$${product.price.toFixed(2)}</span>
@@ -502,35 +513,29 @@ const app = {
                 </div>
                 <div class="text-center">
                     <h2 class="text-2xl font-black uppercase tracking-widest leading-tight mb-2 text-premiumWhite">${product.name}</h2>
-                    
                     <div class="flex justify-center items-baseline gap-3 mb-2">
                         <span class="text-2xl font-black text-premiumWhite tracking-widest block">$${product.price.toFixed(2)}</span>
                         <span class="text-lg font-light text-premiumGray line-through decoration-red-500/70 block">$${product.oldPrice.toFixed(2)}</span>
                     </div>
                 </div>
             </div>
-
             <p class="text-sm text-premiumGray leading-relaxed mb-8 px-2 text-justify">${product.desc}</p>
-
             <div class="space-y-3">
                 <button onclick="app.addToCart(${product.id})" class="w-full bg-premiumCard border border-premiumBorder text-premiumWhite font-bold uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Add to Cart
                 </button>
-                
                 <button onclick="app.openTelegramSupport(${product.id})" class="w-full bg-premiumWhite text-premiumBlack font-black uppercase tracking-widest text-xs py-4 rounded-xl flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.26-3.95 2.58-.29.19-.55.29-.78.28-.26-.01-.76-.15-1.13-.27-.45-.15-.81-.23-.79-.49.01-.13.2-.27.56-.41 2.21-.96 3.68-1.59 4.41-1.89 2.09-.87 2.53-1.02 2.82-1.02.06 0 .2 0 .28.06.07.05.1.12.11.19-.01.07-.01.12-.02.16z"/></svg>
                     Buy now via telegram
                 </button>
             </div>
         `;
-        
         this.navigate('product');
     },
 
     renderCart() {
         const content = document.getElementById('cart-content');
-        
         if (this.cart.length === 0) {
             content.innerHTML = `
                 <div class="text-center py-20">
