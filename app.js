@@ -5,7 +5,7 @@
 
 const app = {
     tg: null,
-    supportUsername: "Chea_Vireak",
+    supportUsername: "@Chea_Vireak",
     searchQuery: "",
     minPrice: 0,
     maxPrice: 1000,
