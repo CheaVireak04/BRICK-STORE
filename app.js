@@ -21,6 +21,13 @@ const app = {
     selectedCompany: null,
     currentVariant: null,
 
+    // MAP STATE VARIABLES
+    mapLat: null, 
+    mapLng: null, 
+    isLocationConfirmed: false, 
+    googleMap: null, 
+    mapMarker: null,
+
     init() {
         // Initialize Telegram Web App API securely
         try { 
@@ -382,6 +389,103 @@ const app = {
         }
     },
 
+    // --- GOOGLE MAPS GRAB EXPRESS LOGIC ---
+
+    getGrabLocation() {
+        this.haptic('medium'); 
+        const b = document.getElementById('btn-get-location'); 
+        b.innerText = "📍 Locating...";
+        
+        if (!navigator.geolocation) { 
+            alert("Geolocation not supported."); 
+            b.innerText = "📍 Get Current Location"; 
+            return; 
+        }
+        
+        navigator.geolocation.getCurrentPosition((pos) => { 
+            this.mapLat = pos.coords.latitude; 
+            this.mapLng = pos.coords.longitude; 
+            b.style.display = "none"; 
+            this.initGoogleMap(this.mapLat, this.mapLng); 
+        }, () => { 
+            alert("Failed to get location."); 
+            b.innerText = "📍 Try Again"; 
+        });
+    },
+
+    initGoogleMap(lat, lng) {
+        const container = document.getElementById('map-container'); 
+        const div = document.getElementById('google-map'); 
+        const confirm = document.getElementById('btn-confirm-location');
+        container.classList.remove('hidden');
+        
+        // Safety Fallback if Google Maps API Key is missing or invalid
+        const hasDummyKey = document.querySelector('script[src*="YOUR_GOOGLE_MAPS_API_KEY"]');
+        if (hasDummyKey || typeof google === 'undefined' || typeof google.maps === 'undefined') { 
+            div.innerHTML = `
+                <div class="flex flex-col items-center justify-center w-full h-full bg-red-900/20 cursor-pointer rounded-xl p-2" onclick="app.simulateMapDrag()">
+                    <span class="text-red-500 font-bold text-xs uppercase">Google Maps API Key Missing.</span>
+                    <span class="text-red-500 font-bold text-xs uppercase mt-1">Location saved internally.</span>
+                </div>
+            `; 
+            this.mapLat = lat; this.mapLng = lng; 
+            confirm.classList.remove('hidden');
+            
+            // Show coords immediately in fallback mode
+            const coordsDisplay = document.getElementById('map-coords');
+            coordsDisplay.innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            coordsDisplay.classList.remove('hidden');
+            return; 
+        }
+        
+        const center = { lat, lng }; 
+        this.googleMap = new google.maps.Map(div, { center, zoom: 16, disableDefaultUI: true, zoomControl: true });
+        this.mapMarker = new google.maps.Marker({ position: center, map: this.googleMap, draggable: true });
+        
+        this.mapMarker.addListener('dragend', (e) => { 
+            this.mapLat = e.latLng.lat(); 
+            this.mapLng = e.latLng.lng(); 
+            this.isLocationConfirmed = false; 
+            confirm.innerText = "Confirm Marker Location"; 
+            confirm.classList.replace('bg-green-500', 'bg-blue-600'); 
+            
+            // Update coords display
+            const coordsDisplay = document.getElementById('map-coords');
+            coordsDisplay.innerText = `${this.mapLat.toFixed(5)}, ${this.mapLng.toFixed(5)}`;
+            coordsDisplay.classList.remove('hidden');
+        });
+        
+        confirm.classList.remove('hidden');
+        
+        // Show coords display initially
+        const coordsDisplay = document.getElementById('map-coords');
+        coordsDisplay.innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        coordsDisplay.classList.remove('hidden');
+    },
+
+    simulateMapDrag() {
+        this.haptic('light'); 
+        this.mapLat += 0.0001; this.mapLng += 0.0001; 
+        this.isLocationConfirmed = false;
+        
+        const c = document.getElementById('btn-confirm-location'); 
+        c.innerText = "Confirm Marker Location"; 
+        c.classList.replace('bg-green-500', 'bg-blue-600');
+        
+        const coordsDisplay = document.getElementById('map-coords');
+        coordsDisplay.innerText = `${this.mapLat.toFixed(5)}, ${this.mapLng.toFixed(5)}`;
+    },
+
+    confirmGrabLocation() { 
+        this.haptic('medium'); 
+        this.isLocationConfirmed = true; 
+        document.getElementById('map-error').classList.add('hidden'); 
+        
+        const c = document.getElementById('btn-confirm-location'); 
+        c.innerHTML = "✅ Location Confirmed"; 
+        c.classList.replace('bg-blue-600', 'bg-green-500'); 
+    },
+
     // --- CHECKOUT FLOW ---
 
     openOrderSummary(productId = null) {
@@ -389,8 +493,17 @@ const app = {
         this.pendingOrderProductId = productId; 
         this.selectedCompany = null;
         
+        // Reset Map State
+        this.isLocationConfirmed = false;
+        const mapContainer = document.getElementById('map-container'); if(mapContainer) mapContainer.classList.add('hidden');
+        const locBtn = document.getElementById('btn-get-location'); 
+        if(locBtn) { locBtn.style.display = 'flex'; locBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Get Current Location`; }
+        const coords = document.getElementById('map-coords'); if(coords) coords.classList.add('hidden');
+        const confBtn = document.getElementById('btn-confirm-location'); 
+        if(confBtn) { confBtn.classList.add('hidden'); confBtn.classList.replace('bg-green-500', 'bg-blue-600'); confBtn.innerText = "Confirm Marker Location"; }
+
         // Reset Error States
-        ['delivery-error', 'phone-error', 'grab-phone-error', 'company-error'].forEach(e => { 
+        ['delivery-error', 'phone-error', 'grab-phone-error', 'company-error', 'map-error'].forEach(e => { 
             const el = document.getElementById(e); 
             if(el) el.classList.add('hidden'); 
         });
@@ -457,7 +570,7 @@ const app = {
         if (isStandard) {
             setTimeout(() => document.getElementById('company-vet').focus(), 50);
         } else if (isGrab) {
-            setTimeout(() => document.getElementById('grab-phone').focus(), 50);
+            setTimeout(() => document.getElementById('btn-get-location').focus(), 50);
         }
     },
 
@@ -479,9 +592,6 @@ const app = {
             targetBox.setAttribute('aria-checked', 'true');
         }
     },
-
-    clearPhoneError() { document.getElementById('phone-error').classList.add('hidden'); },
-    clearGrabPhoneError() { document.getElementById('grab-phone-error').classList.add('hidden'); },
 
     submitFinalOrder() {
         this.haptic('medium'); 
@@ -507,6 +617,10 @@ const app = {
             } 
         }
         if (isGrab) { 
+            if (!this.isLocationConfirmed) {
+                document.getElementById('map-error').classList.remove('hidden');
+                valid = false;
+            }
             if (!document.getElementById('grab-phone').value.trim()) { 
                 document.getElementById('grab-phone-error').classList.remove('hidden'); 
                 valid = false; 
@@ -538,6 +652,7 @@ const app = {
             msg += `📞 Phone: ${document.getElementById('modal-phone').value}\n\n`;
         }
         if (isGrab) {
+            msg += `📍 Location: http://googleusercontent.com/maps.google.com/maps?q=${this.mapLat},${this.mapLng}\n`;
             msg += `📞 Phone: ${document.getElementById('grab-phone').value}\n\n`;
         }
         
